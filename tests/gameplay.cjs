@@ -11,7 +11,7 @@ const tests=`(async()=>{
  let answers=[];modal=async o=>answers.length?answers.shift():true;
  const fresh=()=>{newGame([{char:'bear',cpu:true},{char:'rabbit',cpu:true}],{diff:'normal',rounds:10});G.players.forEach(p=>{p.turns=1;p.missions=[];});return G.players;};
  let [p,q]=fresh();
- ok(G.v===2,'state version');initExpansion();ok(p.missions.length===0,'migration preserves assigned missions');
+ ok(G.v===3,'state version');initExpansion();ok(p.missions.length===0,'migration preserves assigned missions');
  p.missions=[{id:'lands',done:false}];const ids=TILES.map((t,i)=>t.type==='land'?i:-1).filter(i=>i>=0);
  ids.slice(0,3).forEach(i=>G.tiles[i].owner=p.id);checkMissions(p);ok(p.cash===22000,'mission pays');checkMissions(p);ok(p.cash===22000,'mission pays once');
  for(const char of Object.keys(ACTIVE)){
@@ -35,6 +35,13 @@ const tests=`(async()=>{
  [p,q]=fresh();q.cpu=false;answers=[false,true];await auctionLand(ids[0]);ok(G.tiles[ids[0]].owner===p.id,'auction awards winner');ok(p.cash<20000&&q.cash===20000,'only winner pays');
  [p,q]=fresh();p.cash=0;q.cash=0;await auctionLand(ids[0]);ok(G.tiles[ids[0]].owner===-1,'no funds auction ends unsold');
  [p,q]=fresh();p.cpu=false;q.cpu=false;answers=[false,false,true];await auctionLand(ids[0]);ok(G.tiles[ids[0]].owner===-1,'all pass auction ends');
+ // Five houses, skyscraper, skill limits and save compatibility.
+ [p,q]=fresh();const plot=ids[0];G.tiles[plot].owner=p.id;p.char='fox';p.cash=100000;
+ G.tiles[plot].level=5;ok(upCost(p,plot)===Math.round(TILES[plot].up*3*.9),'fox skyline construction discount');
+ answers=[plot];await useActive(p);ok(G.tiles[plot].level===6,'fox builds skyscraper');p.skillReady=0;ok(!skillAvailable(p),'fox blocks beyond skyscraper');
+ ok(landValue(plot)===TILES[plot].price+8*TILES[plot].up,'skyline asset investment');
+ ok(validSave(G),'version 3 saves all six building levels');const saved=JSON.parse(JSON.stringify(G));saved.v=2;saved.tiles[plot].level=4;ok(validSave(saved),'legacy saves accepted');saved.tiles[plot].level=7;ok(!validSave(saved),'invalid seventh level rejected');
+ G.tiles[plot].level=5;const cashBefore=p.cash;const cardIndex=CHANCE.findIndex(c=>c.fx.upgrade);G.cardDecks={chance:[cardIndex]};await drawCard(p,'chance',0);ok(G.tiles[plot].level===6,'event upgrades fifth house to skyscraper');G.cardDecks.chance=[cardIndex];await drawCard(p,'chance',0);ok(G.tiles[plot].level===6&&p.cash===cashBefore+600,'max event substitutes cash');
  // Simulate a complete ten-round game through the actual loop, including settlement.
  [p,q]=fresh();let actions=0,finished=false;playTurn=async player=>{actions++;};newRound=async()=>{};endGame=async()=>{G.over=true;finished=true;};
  await gameLoop(runToken);ok(actions===20&&finished&&G.round===10,'ten rounds executes every seat then finishes');

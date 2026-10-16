@@ -333,8 +333,11 @@ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 
 /* ---------------- 資料 ---------------- */
 const START_CASH=20000, PASS_START=2000, MAX_ITEMS=6;
-const RENT_MULT=[1,3,6,10,15];
-const LEVEL_NAMES=['空地','觀察站','保育中心','生態園區','國家公園'];
+const MAX_BUILD_LEVEL=6;
+const RENT_MULT=[1,3,6,10,15,22,36];
+const LEVEL_NAMES=['空地','1 棟房子','2 棟房子','3 棟房子','4 棟房子','5 棟房子','摩天大樓'];
+function buildUnits(level){return level===MAX_BUILD_LEVEL?8:level;}
+function lastBuildCost(i,level){return TILES[i].up*(level===MAX_BUILD_LEVEL?3:1);}
 
 const CHARS=[
   {id:'bear',emoji:'🐻',name:'熊爺爺老墩',short:'老墩',color:'#9A6233',quote:'慢慢來，比較快。',skill:'好運步伐',desc:'每 3 回合擲骰時，自動多走 1 步。'},
@@ -1436,14 +1439,27 @@ function makeCharModel(id,pcolor){
 }
 
 function makeBuilding(level,color){
-  const g=new THREE.Group(); const wall=mat('#FFF8EC'), roof=mat(color), wood=mat('#8C6A43');
-  const add=(geo,m,x,y,z)=>{ const o=new THREE.Mesh(geo,m); o.position.set(x,y,z); o.castShadow=true; o.receiveShadow=true; g.add(o); return o; };
-  if(level===1){ add(new THREE.BoxGeometry(.55,.4,.45),wall,0,.2,0); const r=add(new THREE.ConeGeometry(.45,.32,4),roof,0,.56,0); r.rotation.y=Math.PI/4; }
-  else if(level===2){ add(new THREE.BoxGeometry(.8,.55,.55),wall,0,.27,0); const r=add(new THREE.ConeGeometry(.6,.4,4),roof,0,.75,0); r.rotation.y=Math.PI/4; add(new THREE.BoxGeometry(.18,.3,.02),wood,0,.15,.28); }
-  else if(level===3){ add(new THREE.BoxGeometry(.95,.5,.6),wall,0,.25,0); add(new THREE.SphereGeometry(.34,16,10,0,Math.PI*2,0,Math.PI/2),roof,0,.5,0); add(new THREE.BoxGeometry(.3,.7,.3),wall,.42,.35,0); add(new THREE.ConeGeometry(.22,.3,4),roof,.42,.85,0); }
-  else if(level===4){ add(new THREE.BoxGeometry(1.0,.45,.65),wall,0,.22,0); add(new THREE.CylinderGeometry(.18,.22,1.2,8),wall,-.3,.6,0); add(new THREE.ConeGeometry(.26,.4,8),roof,-.3,1.4,0); add(new THREE.BoxGeometry(.7,.12,.7),roof,.15,.5,0);
-    add(new THREE.CylinderGeometry(.015,.015,.6,4),wood,.35,.85,0); const fl=add(new THREE.BoxGeometry(.25,.15,.01),roof,.48,1.07,0); fl.userData.flag=true;
-    const t=makeTree(1); t.scale.setScalar(.35); t.position.set(.35,.0,.3); g.add(t); }
+  const g=new THREE.Group();g.userData={kind:level===MAX_BUILD_LEVEL?'skyscraper':'houses',houseCount:level===MAX_BUILD_LEVEL?0:level,level};
+  const wall=mat('#FFF8EC'),roof=mat(color);
+  const add=(geo,m,x,y,z)=>{const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;g.add(o);return o;};
+  if(level===MAX_BUILD_LEVEL){
+    const glass=mat('#89D3E8');
+    add(new THREE.BoxGeometry(.85,.12,.7),roof,0,.06,0);
+    add(new THREE.BoxGeometry(.6,1.65,.5),wall,0,.9,0);
+    add(new THREE.BoxGeometry(.4,.35,.38),roof,0,1.9,0);
+    for(let y=.35;y<1.65;y+=.28)for(const x of [-.17,.17]){
+      add(new THREE.BoxGeometry(.15,.15,.015),glass,x,y,.26);
+      add(new THREE.BoxGeometry(.15,.15,.015),glass,x,y,-.26);
+    }
+    add(new THREE.CylinderGeometry(.018,.018,.45,6),roof,0,2.28,0);
+  }else{
+    const slots=[[-.38,-.23],[0,-.23],[.38,-.23],[-.2,.23],[.2,.23]];
+    for(let n=0;n<level;n++){const [x,z]=slots[n];
+      add(new THREE.BoxGeometry(.29,.3,.29),wall,x,.15,z);
+      const r=add(new THREE.ConeGeometry(.25,.22,4),roof,x,.41,z);r.rotation.y=Math.PI/4;
+      add(new THREE.BoxGeometry(.08,.15,.012),roof,x,.075,z+.15);
+    }
+  }
   return g;
 }
 
@@ -1498,7 +1514,7 @@ function tapTile(x,y){
   if(t.type==='land'){
     const st=G.tiles[i], owner=st.owner>=0?G.players[st.owner]:null;
     html+=`<div><span class="tag">${REGIONS[t.region].name}</span><span class="tag">地價 $${fmt(t.price)}</span><span class="tag">升級 $${fmt(t.up)}</span></div>
-    <p style="margin:8px 0 4px">地主：${owner?`<b style="color:${owner.color}">${owner.name}</b>`:'尚未售出'}　設施：${LEVEL_NAMES[st.level]}</p>
+    <p style="margin:8px 0 4px">地主：${owner?`<b style="color:${owner.color}">${CHAR[owner.char].emoji} ${owner.name}</b>`:'尚未售出'}　設施：${LEVEL_NAMES[st.level]}</p>
     <p style="margin:0 0 8px">過路費：$${fmt(rentOf(i,null))}　（各級：${RENT_MULT.map(m=>fmt(t.rent*m)).join(' / ')}）</p><div class="fact">${t.fact}</div>`;
   } else html+=`<p>${SPECIAL_TXT[t.type]||''}</p>`;
   html+=`<p style="font-size:.8rem;color:var(--muted);margin:8px 0 0">點畫面任意處關閉</p>`;
@@ -1527,10 +1543,15 @@ function syncTile(i){
   if(W.flags[i]){ disposeObject(W.flags[i]); W.flags[i]=null; }
   if(st.owner<0) return;
   const color=G.players[st.owner].color; const inw=inward(i);
-  const flag=new THREE.Group(); const pole=new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,.9,6),mat('#555')); pole.position.y=.45; flag.add(pole);
-  const cloth=new THREE.Mesh(new THREE.BoxGeometry(.4,.26,.03),mat(color)); cloth.position.set(.2,.76,0); cloth.castShadow=true; flag.add(cloth);
+  const owner=G.players[st.owner],flag=new THREE.Group();
+  flag.userData={ownerId:owner.id,char:owner.char,logo:CHAR[owner.char].emoji};
+  const [canvas,ctx]=makeCanvas(256,256);ctx.clearRect(0,0,256,256);
+  ctx.beginPath();ctx.arc(128,128,116,0,Math.PI*2);ctx.fillStyle='#FFFFFF';ctx.fill();ctx.lineWidth=20;ctx.strokeStyle=color;ctx.stroke();
+  ctx.font=`150px ${EMOJI_FONT}`;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#222';ctx.fillText(CHAR[owner.char].emoji,128,138);
+  const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;
+  const badge=new THREE.Mesh(new THREE.PlaneGeometry(.63,.63),new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide,depthWrite:false}));badge.rotation.x=-Math.PI/2;flag.add(badge);
   const perp=[-inw[2],0,inw[0]];
-  flag.position.set(perp[0]*.85+inw[0]*.85,TILE_TOP,perp[2]*.85+inw[2]*.85); flag.rotation.y=sideYaw(i); g.add(flag); W.flags[i]=flag;
+  flag.position.set(perp[0]*.78-inw[0]*.78,TILE_TOP+.025,perp[2]*.78-inw[2]*.78);g.add(flag);W.flags[i]=flag;
   if(st.level>0){ const b=makeBuilding(st.level,color); b.position.set(inw[0]*.62,TILE_TOP,inw[2]*.62); b.rotation.y=sideYaw(i); b.scale.setScalar(.95); g.add(b); W.buildings[i]=b; }
 }
 async function growBuilding(i){
@@ -1621,7 +1642,7 @@ function renderLog(){
   const el=$('#log'); el.innerHTML=G.log.slice(-2).map(e=>`<div class="le"><span class="dot" style="background:${e.c}"></span><span>${e.t}</span></div>`).join(''); el.scrollTop=el.scrollHeight;
 }
 function totalAssets(p){
-  let v=p.cash+p.deposit; G.tiles.forEach((st,i)=>{ if(st.owner===p.id) v+=TILES[i].price+st.level*TILES[i].up; }); return v;
+  let v=p.cash+p.deposit; G.tiles.forEach((st,i)=>{ if(st.owner===p.id) v+=TILES[i].price+buildUnits(st.level)*TILES[i].up; }); return v;
 }
 function renderPlayers(){
   const el=$('#players');
@@ -1643,9 +1664,9 @@ let G=null, runToken=0, preRollResolve=null;
 const SAVE_KEY='animal-kingdom-tycoon-v1';
 function save(){ try{ if(G && !G.over) localStorage.setItem(SAVE_KEY,JSON.stringify(G)); }catch(e){} }
 function validSave(s){
- if(!s||![1,2].includes(s.v)||!s.settings||!['easy','normal','hard'].includes(s.settings.diff)||![0,10,20,30].includes(s.settings.rounds))return false;
+ if(!s||![1,2,3].includes(s.v)||!s.settings||!['easy','normal','hard'].includes(s.settings.diff)||![0,10,20,30].includes(s.settings.rounds))return false;
  if(!Array.isArray(s.players)||s.players.length<2||s.players.length>6||!Number.isInteger(s.cur)||s.cur<0||s.cur>=s.players.length||!Number.isInteger(s.round)||s.round<1)return false;
- if(!Array.isArray(s.tiles)||s.tiles.length!==N||!s.tiles.every(t=>t&&Number.isInteger(t.owner)&&t.owner>=-1&&t.owner<s.players.length&&Number.isInteger(t.level)&&t.level>=0&&t.level<=4))return false;
+ if(!Array.isArray(s.tiles)||s.tiles.length!==N||!s.tiles.every(t=>t&&Number.isInteger(t.owner)&&t.owner>=-1&&t.owner<s.players.length&&Number.isInteger(t.level)&&t.level>=0&&t.level<=MAX_BUILD_LEVEL))return false;
  if(!['log','barriers','spirits','quizUsed'].every(k=>Array.isArray(s[k])))return false;
  if(!s.players.every((p,i)=>p&&p.id===i&&CHAR[p.char]&&typeof p.name==='string'&&Number.isFinite(p.cash)&&p.cash>=0&&Number.isFinite(p.deposit)&&p.deposit>=0&&Number.isInteger(p.pos)&&p.pos>=0&&p.pos<N&&Number.isInteger(p.turns)&&p.turns>=0&&Number.isInteger(p.skip)&&p.skip>=0&&Array.isArray(p.items)&&p.items.every(k=>ITEMS[k])&&Array.isArray(p.facts)&&(!p.spirit||SPIRITS[p.spirit.type])))return false;
  if(!s.barriers.every(i=>Number.isInteger(i)&&i>=0&&i<N)||!s.spirits.every(v=>v&&SPIRITS[v.type]&&Number.isInteger(v.tile)&&v.tile>=0&&v.tile<N)||!s.quizUsed.every(i=>Number.isInteger(i)&&i>=0&&i<QUIZ.length))return false;
@@ -1668,10 +1689,10 @@ function gain(p,amt,reason=''){ p.cash+=amt; floatText(p,'+$'+fmt(amt),'#2E9E5B'
 function alive(){ return G.players.filter(p=>!p.out); }
 function sellOne(p){
   let best=null;
-  G.tiles.forEach((st,i)=>{ if(st.owner!==p.id) return; const val=st.level>0?TILES[i].up:TILES[i].price; if(!best||val<best.val) best={i,val,st}; });
+  G.tiles.forEach((st,i)=>{ if(st.owner!==p.id) return; const val=st.level>0?lastBuildCost(i,st.level):TILES[i].price; if(!best||val<best.val) best={i,val,st}; });
   if(!best) return false;
   const t=TILES[best.i];
-  if(best.st.level>0){ best.st.level--; p.cash+=Math.round(t.up*.5); log(`${p.name} 賣掉「${t.name}」一級設施，拿回 $${fmt(t.up*.5)}`,p); }
+  if(best.st.level>0){ const refund=Math.round(lastBuildCost(best.i,best.st.level)*.5); best.st.level--; p.cash+=refund; log(`${p.name} 賣掉「${t.name}」一級設施，拿回 $${fmt(refund)}`,p); }
   else { best.st.owner=-1; p.cash+=Math.round(t.price*.5); log(`${p.name} 賣掉土地「${t.name}」，拿回 $${fmt(t.price*.5)}`,p); }
   syncTile(best.i); return true;
 }
@@ -1876,7 +1897,7 @@ function rentOf(i,payer){
   return Math.round(r);
 }
 function buyCost(p,i){ return Math.round(TILES[i].price*(p.char==='fox'?.9:1)); }
-function upCost(p,i){ return Math.round(TILES[i].up*(p.char==='fox'?.9:1)); }
+function upCost(p,i){ return Math.round(lastBuildCost(i,G.tiles[i].level+1)*(p.char==='fox'?.9:1)); }
 
 async function landLand(p){
   const i=p.pos, t=TILES[i], st=G.tiles[i]; addFact(p,t.fact);
@@ -1885,13 +1906,13 @@ async function landLand(p){
     const cost=buyCost(p,i); const can=p.cash>=cost;
     let buy;
     if(p.cpu){ buy=can && cpuWantsBuy(p,cost,i); await modal({...head,title:t.name,body:`<p>${p.name} ${buy?'決定買下這塊地！':'考慮後決定不買。'}</p><div class="fact">${t.fact}</div>`,auto:1400}); }
-    else buy=await modal({...head,title:`${t.name}保護區`,body:`<p>這塊地還沒有主人。要花 <b>$${fmt(cost)}</b> 買下嗎？${p.char==='fox'?'（殺價九折）':''}</p><p style="font-size:.9rem;color:var(--muted)">空地過路費 $${fmt(t.rent)}，蓋到國家公園可收 $${fmt(t.rent*15)}。</p><div class="fact">${t.fact}</div>`,buttons:[{label:'不買',value:false},{label:can?`買下 $${fmt(cost)}`:'錢不夠',value:true,cls:'primary',disabled:!can}]});
+    else buy=await modal({...head,title:`${t.name}保護區`,body:`<p>這塊地還沒有主人。要花 <b>$${fmt(cost)}</b> 買下嗎？${p.char==='fox'?'（殺價九折）':''}</p><p style="font-size:.9rem;color:var(--muted)">空地過路費 $${fmt(t.rent)}，蓋到摩天大樓可收 $${fmt(t.rent*RENT_MULT[MAX_BUILD_LEVEL])}。</p><div class="fact">${t.fact}</div>`,buttons:[{label:'不買',value:false},{label:can?`買下 $${fmt(cost)}`:'錢不夠',value:true,cls:'primary',disabled:!can}]});
     if(buy && p.cash>=cost){ p.cash-=cost; st.owner=p.id; st.level=0; syncTile(i); burst(tilePos(i).add(new THREE.Vector3(0,1,0)),p.color); SND.play('buy'); floatText(p,'-$'+fmt(cost),'#D8473C'); log(`${p.name} 買下「${t.name}」（$${fmt(cost)}）`,p);
       if(regionFull(i)) { log(`${p.name} 集滿「${REGIONS[t.region].name}」！整區過路費加倍`,p); banner(`${REGIONS[t.region].name}全區到手！`,'整區過路費 ×2'); SND.play('good'); }
       renderPlayers(); }
     if(st.owner<0) await auctionLand(i);
   } else if(st.owner===p.id){
-    if(st.level>=4){ await modal({...head,title:t.name,body:'<p>這裡已經是國家公園，設施滿級了！</p>',auto:p.cpu?1200:1600,buttons:[]}); return; }
+    if(st.level>=MAX_BUILD_LEVEL){ await modal({...head,title:t.name,body:'<p>這裡已經蓋好摩天大樓，建設滿級了！</p>',auto:p.cpu?1200:1600,buttons:[]}); return; }
     const cost=upCost(p,i), can=p.cash>=cost;
     let up;
     if(p.cpu){ up=can && cpuWantsUpgrade(p,cost); if(up) await modal({...head,title:t.name,body:`<p>${p.name} 把這裡升級成「${LEVEL_NAMES[st.level+1]}」！</p>`,auto:1200,buttons:[]}); }
@@ -1928,7 +1949,7 @@ async function drawCard(p,type,depth){
   if(p.out)return;
   if(fx.quiz){await doQuiz(p,fx.quiz);if(p.out)return;}
   if(fx.cleanse){if(p.spirit&&!SPIRITS[p.spirit.type].good){p.spirit=null;log(`${p.name} 清除了壞精靈`,p);}else gain(p,600,'領取保育補助');}
-  if(fx.upgrade){const own=G.tiles.map((s,i)=>({s,i})).filter(o=>o.s.owner===p.id&&o.s.level<4);if(own.length){const o=pick(own);o.s.level++;log(`${p.name} 的「${TILES[o.i].name}」免費升一級`,p);await growBuilding(o.i);}else gain(p,600,'領取替代補助');}
+  if(fx.upgrade){const own=G.tiles.map((s,i)=>({s,i})).filter(o=>o.s.owner===p.id&&o.s.level<MAX_BUILD_LEVEL);if(own.length){const o=pick(own);o.s.level++;log(`${p.name} 的「${TILES[o.i].name}」免費升一級`,p);await growBuilding(o.i);}else gain(p,600,'領取替代補助');}
   if(fx.collectEach){ for(const q of alive()) if(q!==p) await pay(q,fx.collectEach,p,''); }
   if(fx.payEach){ for(const q of alive()) if(q!==p && !p.out) await pay(p,fx.payEach,q,''); }
   if(fx.item) await giveItem(p,fx.item,'得到');
@@ -2092,7 +2113,7 @@ async function cpuPreRoll(p){
   if(p.items.includes('remote')){
     let best=null,bestScore=-1e9;
     for(let n=1;n<=12;n++){ const j=(p.pos+n)%N; const t=TILES[j], st=G.tiles[j]; let sc=0;
-      if(t.type==='land'){ if(st.owner<0) sc=p.cash>=buyCost(p,j)?t.price/100:0; else if(st.owner===p.id) sc=st.level<4&&p.cash>upCost(p,j)?t.up/100:2; else sc=-rentOf(j,p)/100; }
+      if(t.type==='land'){ if(st.owner<0) sc=p.cash>=buyCost(p,j)?t.price/100:0; else if(st.owner===p.id) sc=st.level<MAX_BUILD_LEVEL&&p.cash>upCost(p,j)?t.up/100:2; else sc=-rentOf(j,p)/100; }
       else if(t.type==='quiz') sc=6; else if(t.type==='chance') sc=5; else if(t.type==='supply') sc=7; else if(t.type==='police') sc=-25; else if(t.type==='hospital') sc=-10; else if(t.type==='fate') sc=-3;
       if(p.pos+n>=N) sc+=20;
       if(sc>bestScore){ bestScore=sc; best=n; } }
@@ -2200,7 +2221,7 @@ function showRules(){
   return modal({emoji:'📖',title:'遊戲規則',wide:true,buttons:[{label:'我知道了',value:true,cls:'primary'}],body:`<div class="rules">
   <h4>目標</h4><ul><li>每人起始 $20,000。讓對手破產，或在回合上限到時擁有最多總資產（現金＋存款＋土地＋設施），就是動物王國大亨！</li></ul>
   <h4>輪流行動</h4><ul><li>輪到你時可以先用道具卡，再擲兩顆骰子前進。</li><li>經過或停在起點領 $2,000，存款會依利率生利息。</li></ul>
-  <h4>動物保護區（土地）</h4><ul><li>停在沒人的土地可以買下；停在自己的土地可以升級：空地 → 觀察站 → 保育中心 → 生態園區 → 國家公園。</li><li>停在別人的土地要付過路費；同一個棲地區全部買下，過路費加倍。</li><li>錢不夠時會自動從存款扣，再不夠就要賣掉設施和土地；還是不夠就破產。</li></ul>
+  <h4>動物保護區（土地）</h4><ul><li>停在沒人的土地可以買下；再次停在自己的土地，可以付費增加 1 棟房子，最多 5 棟；集滿 5 棟後，下次再來可付 3 倍建築費，改建摩天大樓。地主角色小圖示會顯示在土地角落。</li><li>房子 1～5 棟的基本過路費依序為空地的 3、6、10、15、22 倍，摩天大樓為 36 倍。停在別人的土地要付過路費；同一個棲地區全部買下，過路費加倍。</li><li>錢不夠時會自動從存款扣，再不夠就要賣掉設施和土地；還是不夠就破產。</li></ul>
   <h4>特殊格</h4><ul><li>機會與命運各 48 張；各含 8 張四選一自然挑戰。機會以獎勵為主，命運包含好壞轉機；同牌組抽完一輪再洗牌。</li><li>機會挑戰答錯不扣款；命運研習答錯支付 300 遊戲幣。情境、罰款與停留均為遊戲設定，非真實法規罰則。</li><li>🎲 機會、📜 命運：抽卡，有獎勵也有懲罰，每張都有自然小知識。</li><li>🔬 科學挑戰站：答對 +$1,000，答錯 -$300。</li><li>🎪 分類快手：20 秒動物分類，每答對 +$200。</li><li>🎁 神秘補給站：免費得到一張道具卡。🏦 銀行：存錢、領錢。</li><li>🏥 動物醫院：休息 1 回合。🚓 盜獵警察局：停 2 回合，可付 $1,000 保釋。🌳 大樹公園：休息，還能趕走壞精靈。</li></ul>
   <h4>自然精靈</h4><ul>${Object.values(SPIRITS).map(s=>`<li>${s.emoji} ${s.name}：${s.desc}，${s.turns} 回合。</li>`).join('')}<li>精靈會隨機出現在棋盤上，停在那一格就會附身。</li></ul>
   <h4>道具卡（最多 6 張）</h4><ul>${Object.values(ITEMS).map(s=>`<li>${s.emoji} ${s.name}：${s.desc}</li>`).join('')}</ul>
@@ -2254,7 +2275,7 @@ const MISSIONS=[
 ];
 const esc=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function initExpansion(){
- G.v=2;
+ G.v=3;
  G.players.forEach(p=>{
   if(!p.missions) p.missions=shuffle(MISSIONS.slice()).slice(0,2).map(m=>({id:m.id,done:false}));
   p.skillReady??=1; p.tradeCount??=0; p.tradeTurn??=-1;
@@ -2286,14 +2307,14 @@ function skillAvailable(p){
  if(p.turns<p.skillReady) return false;
  if(['rabbit','monkey'].includes(p.char)) return p.items.length<MAX_ITEMS;
  if(p.char==='turtle') return !p.quizBoost;
- if(p.char==='fox') return owned(p).some(o=>o.s.level<4&&p.cash>=Math.ceil(upCost(p,o.i)/2));
+ if(p.char==='fox') return owned(p).some(o=>o.s.level<MAX_BUILD_LEVEL&&p.cash>=Math.ceil(upCost(p,o.i)/2));
  return true;
 }
 async function useActive(p){
  if(!skillAvailable(p)) return;
  const a=ACTIVE[p.char]; let selected;
  if(p.char==='fox'){
-  const options=owned(p).filter(o=>o.s.level<4&&p.cash>=Math.ceil(upCost(p,o.i)/2));
+  const options=owned(p).filter(o=>o.s.level<MAX_BUILD_LEVEL&&p.cash>=Math.ceil(upCost(p,o.i)/2));
   selected=p.cpu?options.sort((a,b)=>b.s.level-a.s.level)[0].i:await modal({emoji:'🦊',title:a.name,body:'<p>選擇土地立即升一級。</p>',buttons:[...options.map(o=>({label:`${TILES[o.i].name} → ${LEVEL_NAMES[o.s.level+1]} $${fmt(Math.ceil(upCost(p,o.i)/2))}`,value:o.i})),{label:'取消',value:null}]});
   if(selected==null) return;
  }else if(!p.cpu){
@@ -2340,7 +2361,7 @@ async function auctionLand(i){
  renderPlayers();
  await modal({emoji:'🔨',title:'拍賣結果',body:`<p>${winner?`${esc(winner.name)} 以 $${fmt(bid)} 標下 ${tile.name}！`:'無人出價，土地保留給下一位探險家。'}</p>`,auto:1800,buttons:[]});
 }
-function landValue(i){return TILES[i].price+G.tiles[i].level*TILES[i].up;}
+function landValue(i){return TILES[i].price+buildUnits(G.tiles[i].level)*TILES[i].up;}
 function validTrade(p,q,offer,request,cash){
  return p!==q&&!p.out&&!q.out&&p.tradeTurn!==p.turns&&Number.isInteger(cash)&&
   (offer===-1||G.tiles[offer]?.owner===p.id)&&(request===-1||G.tiles[request]?.owner===q.id)&&

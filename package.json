@@ -1,6 +1,6 @@
 {
   "name": "animal-paradise",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "private": true,
   "scripts": {
     "test": "node tests/gameplay.cjs",
@@ -9,7 +9,10 @@
     "test:viewport": "node tests/viewport.cjs",
     "test:cards": "node tests/cards.cjs",
     "test:card-browser": "node tests/card-browser.cjs",
-    "serve": "python -m http.server 8765 --bind 127.0.0.1"
+    "serve": "python -m http.server 8765 --bind 127.0.0.1",
+    "test:buildings": "node tests/buildings-browser.cjs"
   },
-  "devDependencies": { "@playwright/test": "1.64.1" }
+  "devDependencies": {
+    "@playwright/test": "1.64.1"
+  }
 }
