@@ -41,3 +41,9 @@
 可用 `GAME_TEST_FILTER` 選擇名稱包含指定文字的情境，並以 `GAME_REPORT_DIR` 指定報告目錄。
 
 原版仍保存在本機 `animal-kingdom-tycoon/`，原始 ZIP 未修改。
+
+## 2026-10-16 Facebook 素材補充測試
+- `npm run test:social` 通過：中文版、英文版、中英合併版的剪貼簿內容、PNG 圖片剪貼簿、縮圖下載、390 px 行動版與首頁 Open Graph 標記。
+- Windows 剪貼簿的 CRLF 與頁面 LF 換行經正規化比對，文案內容完整一致。
+- 縮圖 1733 × 907 PNG，內建 ImageGen 製作，提示詞保存在 `social/thumbnail-prompt.txt`。
+- 遊戲原有 49 項邏輯檢查再次通過；此次未修改遊戲規則。

@@ -46,3 +46,7 @@
 
 ## 原始備份
 本機 `animal-kingdom-tycoon/` 保留收到的原版，並列入 `.gitignore`；GitHub 只提交根目錄的維護版本與測試。
+
+## 臉書分享素材
+`social/facebook.html` 提供中文版、英文版與中英合併版的一鍵複製，以及縮圖複製／下載。遊戲首頁已設定 Open Graph 分享圖片。
+`npm run test:social` 驗證實際剪貼簿文字、圖片複製、下載、行動版與分享 metadata；執行前同樣需啟動本機伺服器。
