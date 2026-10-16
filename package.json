@@ -1,0 +1,11 @@
+{
+  "name": "animal-paradise",
+  "version": "2.1.0",
+  "private": true,
+  "scripts": {
+    "test": "node tests/gameplay.cjs",
+    "test:browser": "node tests/browser-audit.cjs",
+    "serve": "python -m http.server 8765 --bind 127.0.0.1"
+  },
+  "devDependencies": { "@playwright/test": "1.64.1" }
+}
