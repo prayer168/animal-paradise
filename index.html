@@ -188,6 +188,38 @@ label.lab{font-weight:700;font-size:.95rem;min-width:5.5em}
 .trade-form{display:grid;gap:12px}.trade-form label{display:grid;gap:5px}.trade-form select,.trade-form input{font:inherit;padding:10px;max-width:100%;width:100%;border:2px solid var(--ink);border-radius:8px}
 @media(max-height:520px){#topbar{flex-direction:row;flex-wrap:wrap;justify-content:flex-end;max-width:calc(100vw - 150px);gap:5px}#topbar button{width:36px;height:36px;font-size:17px}#log{max-height:18vh;bottom:100px}}
 @media(max-width:620px){#dock{width:calc(100vw - 20px)}#dock .btn{padding:9px 8px;font-size:.85rem}#log{bottom:150px;max-height:15vh}}
+
+/* One-screen game layout: content reflows; panels fit the visual viewport. */
+html,body,#app{width:100%;height:100%;overflow:hidden;overscroll-behavior:none}
+#app{height:var(--game-height,100dvh);width:var(--game-width,100vw)}
+#setup{display:grid;place-items:center;padding:8px;overflow:hidden}
+.setup-inner{width:min(1080px,calc(var(--game-width,100vw) - 16px));max-width:none;height:auto;gap:8px;display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);grid-template-areas:"title title" "resume resume" "mode seats" "settings seats" "actions actions";align-items:start}
+.title-block{grid-area:title;padding:0}.title-block h1{font-size:32px;line-height:1.15}.title-block .en{font-size:11px;letter-spacing:.12em}.title-block p{display:none}
+#continuePanel{grid-area:resume;display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:center}#continuePanel h2{font-size:14px}#continuePanel .row:last-child{grid-column:2;grid-row:1/3}#continueInfo{font-size:12px}
+#setupModePanel{grid-area:mode}#setupSeatPanel{grid-area:seats}#setupSettingsPanel{grid-area:settings}.start-row{grid-area:actions}
+#setup .panel{padding:10px;gap:7px;box-shadow:0 3px 0 var(--ink)}#setup .panel h2{font-size:16px}#setup .row{gap:5px}#setup label.lab{min-width:0;font-size:13px}#setup .seg{gap:4px}#setup .seg button{font-size:13px;padding:6px 9px;min-height:32px}
+#seatNav{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:4px}#seatNav button{border:2px solid var(--ink);border-radius:8px;background:white;padding:5px 2px;min-height:34px;font-size:15px}#seatNav button[aria-pressed=true]{background:var(--sun)}
+.seats{display:block}.seat{padding:8px;gap:6px;grid-template-columns:40px 1fr}.seat .avatar{width:40px;height:40px;font-size:24px;grid-row:auto}.seat-top{gap:5px}.seat-top input{flex:1 1 70px;width:70px;font-size:14px;padding:5px}.typebtn{font-size:12px;padding:5px 8px}.charpick{grid-column:1/-1;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:5px}.charpick button{width:100%;height:36px;font-size:23px}.seat-skill{font-size:12px;line-height:1.5}.seat-note{font-size:11px!important;line-height:1.35}
+.start-row .btn{font-size:16px;padding:9px 18px;min-height:40px}
+#players{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));overflow:hidden;gap:5px;padding-bottom:8px;align-items:stretch}
+.pchip{min-width:0;padding:4px;gap:4px;box-shadow:0 2px 0 var(--ink)}.pchip .pa{flex:0 0 auto;width:30px;height:30px;font-size:20px}.pchip>div:last-child{min-width:0}.pchip .pn{white-space:normal;overflow-wrap:anywhere;font-size:12px}.pchip .pm{font-size:13px}.pchip .ps{white-space:normal;overflow-wrap:anywhere;font-size:10px;line-height:1.3}
+#roundInfo{top:calc(var(--players-height,70px) + 10px);font-size:12px;padding:5px 7px}
+#topbar{top:calc(var(--players-height,70px) + 10px);right:8px;display:flex;flex-direction:row;flex-wrap:nowrap;gap:4px;max-width:none}
+#topbar button{width:clamp(30px,4vw,44px);height:clamp(30px,4vw,44px);font-size:18px;border-width:2px;border-radius:8px}
+#log,#log.collapsed{overflow:hidden;max-height:none;bottom:calc(var(--dock-height,50px) + 36px);width:min(300px,calc(100vw - 16px));font-size:11px;cursor:pointer}
+#dock{gap:5px;bottom:calc(10px + env(safe-area-inset-bottom,0px))}#dock .btn,#itemBtn{padding:10px 9px;font-size:14px;min-height:40px}#dock .hint{font-size:12px;margin-bottom:6px}
+#modal{padding:10px;overflow:hidden}.mcard{max-height:none;max-width:none;overflow:visible;animation:none;padding:14px;gap:10px}.mhead .big{font-size:32px}.mhead h3{font-size:21px}.mhead .sub{font-size:12px}.mbody{font-size:14px;line-height:1.5}.mbtns{gap:6px}.mbtns .btn{font-size:14px;padding:9px 12px;min-height:36px}.mbody p{overflow-wrap:anywhere}.opts button{font-size:14px;padding:8px 10px}
+.rules-select{display:block;width:100%;font:inherit;padding:8px;border:2px solid var(--ink);border-radius:8px;background:var(--mist);margin-bottom:10px}.rules-section h4{display:none}.rules ul{line-height:1.6}.rule-title{font-size:14px;font-weight:700;margin-bottom:6px}
+.trade-form{gap:7px}.trade-form label{gap:3px}.trade-form select,.trade-form input{padding:7px;font-size:14px}.trade-form p{font-size:12px}.rank{font-size:12px;table-layout:fixed}.rank th,.rank td{padding:5px 2px;overflow-wrap:anywhere}.rank th:first-child{width:32px}.rank th:nth-child(2){width:26%}.rank th:nth-child(4){width:36px}.rank td.n{white-space:normal}.fact-picks{display:flex;flex-wrap:wrap;gap:4px;margin:8px 0}.fact-picks button{border:1px solid var(--ink);border-radius:6px;background:white;min-width:26px;min-height:28px}.fact-picks button[aria-pressed=true]{background:var(--sun)}
+.card-note{font-size:11px;color:var(--muted);margin-top:6px!important}.cardface{font-size:1rem;padding:10px}.log-range{width:100%;margin-top:12px}.log-detail{min-height:3em;overflow-wrap:anywhere}
+.modal-choice-label{display:grid;gap:6px;margin-top:10px}.modal-choice-label select{width:100%;font:inherit;font-size:16px;padding:8px;border:2px solid var(--ink);border-radius:8px;background:white}.items button{padding:6px 8px;gap:2px 6px}.items button b{font-size:14px}.items button small{font-size:11px}.items button .ie{font-size:24px}
+@media(max-width:700px){.seat-top input,.trade-form input,.trade-form select{font-size:16px}}
+@media(max-height:500px) and (min-width:540px){.opts,.items{grid-template-columns:repeat(2,minmax(0,1fr))}.mbody{font-size:13px}.mhead h3{font-size:18px}.mcard{gap:7px}.opts button{font-size:13px}}
+@media(max-height:500px) and (min-width:540px){.mcard:has(.rank) .mbody{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:7px}.mcard:has(.rank) .mbody>div:first-child{grid-column:1;grid-row:1/4}.mcard:has(.rank) .mbody>h4{grid-column:2;margin:0!important;font-size:12px}.mcard:has(.rank) .fact-picks{grid-column:2;margin:0}.mcard:has(.rank) .fact{grid-column:2;font-size:12px;padding:6px}.rank th,.rank td{padding:4px 2px}}
+@media(min-width:2200px) and (min-height:1200px){.pchip{padding:10px;gap:10px}.pchip .pa{width:50px;height:50px;font-size:32px}.pchip .pn{font-size:22px}.pchip .pm{font-size:26px}.pchip .ps{font-size:18px}#roundInfo{font-size:22px;padding:8px 14px}#topbar{gap:8px}#topbar button{width:60px;height:60px;font-size:30px}#dock .btn,#itemBtn{font-size:23px;padding:16px 22px;min-height:60px}#dock .hint{font-size:20px}#log{font-size:18px;width:500px}}
+@media(max-width:700px){.setup-inner{grid-template-columns:1fr;grid-template-areas:"title" "resume" "mode" "seats" "settings" "actions";gap:6px}.title-block h1{font-size:26px}#setup .panel{padding:8px;gap:5px}.seat{padding:6px}.seat-skill{font-size:12px}#setup .seg button{padding:5px 7px}#players{grid-template-columns:repeat(3,minmax(0,1fr))}.pchip .pa{width:24px;height:24px;font-size:16px}.pchip .pm{font-size:12px}.pchip .pn{font-size:11px}.pchip .ps{font-size:9px}#dock .btn,#itemBtn{font-size:12px;padding:8px 7px;min-height:36px}#log{font-size:10px}.mcard{padding:12px}.rank{font-size:11px}}
+@media(max-height:500px) and (min-width:540px){.setup-inner{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);grid-template-areas:"title title" "resume resume" "mode seats" "settings seats" "actions actions";gap:5px}.title-block h1{font-size:23px}.title-block .en{display:none}#setup .panel{padding:7px;gap:4px}#setup .panel h2{font-size:14px}#setup .seg button{padding:4px 7px;min-height:28px}.seat-skill{font-size:11px}.seat-note{display:none}.start-row .btn{font-size:14px;padding:7px 14px;min-height:32px}#players{grid-template-columns:repeat(6,minmax(0,1fr))}.pchip .pa{display:none}.pchip .ps{font-size:9px}#log{width:min(260px,38vw);font-size:10px;bottom:8px}#dock{right:8px;left:auto;transform:none;max-width:60vw}#dock .hint{left:auto;right:0;transform:none}.trade-form{display:grid;grid-template-columns:1fr 1fr}.trade-form p,.trade-form #submitTrade,.trade-form #tradeError{grid-column:1/-1}}
+
 </style>
 </head>
 <body>
@@ -209,7 +241,7 @@ label.lab{font-weight:700;font-size:.95rem;min-width:5.5em}
         <div class="row"><button class="btn green" id="continueBtn">繼續遊戲</button><button class="btn small" id="discardBtn">放棄存檔</button></div>
       </div>
 
-      <div class="panel">
+      <div class="panel" id="setupModePanel">
         <h2>1. 選擇模式</h2>
         <div class="seg" id="modeSeg">
           <button type="button" data-mode="solo" aria-pressed="true">單人對電腦</button>
@@ -218,13 +250,14 @@ label.lab{font-weight:700;font-size:.95rem;min-width:5.5em}
         <div class="row"><label class="lab">遊戲人數</label><div class="seg" id="countSeg"></div></div>
       </div>
 
-      <div class="panel">
+      <div class="panel" id="setupSeatPanel">
         <h2>2. 選擇角色</h2>
+        <div id="seatNav" aria-label="選擇要編輯的玩家"></div>
         <div class="seats" id="seats"></div>
-        <div style="font-size:.85rem;color:var(--muted)">每個人要選不同的角色。點「玩家／電腦」可以切換這個座位由誰來玩。</div>
+        <div class="seat-note" style="color:var(--muted)">點上方玩家編號編輯；每人選不同角色。點「玩家／電腦」切換操作者。</div>
       </div>
 
-      <div class="panel">
+      <div class="panel" id="setupSettingsPanel">
         <h2>3. 遊戲設定</h2>
         <div class="row"><label class="lab">電腦難度</label><div class="seg" id="diffSeg">
           <button type="button" data-v="easy" aria-pressed="false">簡單</button>
@@ -384,8 +417,8 @@ const ITEM_POOL=['remote','remote','barrier','reverse','seize','demolish','free'
 
 /* 機會卡：多為獎勵 */
 const CHANCE=[
-  {t:'參加淨灘活動，撿起 30 公斤垃圾，獲得環保獎金 1,500 元。',f:'塑膠在大自然中很難分解，可能要好幾百年才會碎裂消失。',fx:{money:1500}},
-  {t:'你發現一種新的蘭花，研究報告得獎，獲得 2,000 元。',f:'台灣有 400 多種原生蘭花，是蘭花種類很豐富的地方。',fx:{money:2000}},
+  {t:'參加淨灘活動，撿起 30 公斤垃圾，獲得環保獎金 1,500 元。',f:'塑膠可能碎裂成微塑膠，不表示已完全分解消失。',fx:{money:1500}},
+  {t:'你發現一種新的蘭花，研究報告得獎，獲得 2,000 元。',f:'臺灣有多種原生蘭花，觀察時不任意採摘。',fx:{money:2000}},
   {t:'搭上生態巴士，直接前進到起點！',f:'公共運輸比自己開車排放更少的二氧化碳。',fx:{moveTo:0}},
   {t:'跟著鮭魚逆流而上，前進到「櫻花鉤吻鮭」。',f:'鮭魚長大後會回到出生的溪流產卵。',fx:{moveTo:33}},
   {t:'你開辦自然觀察營，向每位玩家收 300 元報名費。',f:'觀察自然要「只帶走照片，只留下腳印」。',fx:{collectEach:300}},
@@ -393,15 +426,15 @@ const CHANCE=[
   {t:'豐收精靈降臨在你身上！',f:'蜜蜂、蝴蝶幫花朵傳粉，植物才能結出果實。',fx:{spirit:'harvest'}},
   {t:'守護精靈降臨在你身上！',f:'設立保護區，能讓野生動物有安全的家。',fx:{spirit:'guard'}},
   {t:'你在校園種了 100 棵樹，獲得綠化補助 1,000 元。',f:'植物行光合作用，會吸收二氧化碳、放出氧氣。',fx:{money:1000}},
-  {t:'協助移除外來種綠鬣蜥，獲得獎金 800 元。',f:'綠鬣蜥是外來種，會啃食農作物，也會挖洞破壞堤防。',fx:{money:800}},
+  {t:'協助專業團隊記錄外來種綠鬣蜥的位置，獲得獎金 800 元。',f:'綠鬣蜥是外來種，會啃食農作物，也會挖洞破壞堤防。',fx:{money:800}},
   {t:'像獵豹一樣衝刺，前進 3 格！',f:'獵豹是陸地上跑最快的動物，短距離衝刺時速可超過 100 公里。',fx:{move:3}},
-  {t:'你救了一隻擱淺的海豚，獲得一張免費卡。',f:'海豚是哺乳類，要浮出水面用頭頂的噴氣孔呼吸。',fx:{item:'free'}},
+  {t:'發現擱淺海豚後保持距離並請成人協助通報，獲得免費卡。',f:'海豚是哺乳類，要浮出水面用頭頂的噴氣孔呼吸。',fx:{item:'free'}},
   {t:'你的賞鳥照片登上雜誌封面，稿費 1,200 元。',f:'賞鳥時要用望遠鏡在遠處觀察，不要靠近驚擾鳥類。',fx:{money:1200}},
   {t:'學招潮蟹橫著走，後退 2 格。',f:'招潮蟹的雄蟹有一隻特別大的螯，用來求偶和打架。',fx:{move:-2}},
   {t:'銀行舉辦「愛地球存款日」，立刻發放一次存款利息。',f:'省水省電、隨手關燈，也是在幫地球「存款」。',fx:{interest:true}},
-  {t:'你在溪邊撿到一張驅除卡。',f:'溪流裡有石蠅、蜉蝣的幼蟲，表示水質很乾淨。',fx:{item:'dispel'}},
+  {t:'你在溪邊撿到一張驅除卡。',f:'水生昆蟲可作為水質觀察的線索，但不能只靠單一生物判定水質。',fx:{item:'dispel'}},
 ];
-/* 命運卡：多為懲罰 */
+/* 命運卡：包含好壞轉機與保育公約情境 */
 const FATE=[
   {t:'在海邊亂丟塑膠袋，被罰款 800 元。',f:'海龜常把漂在水中的塑膠袋誤認成水母吃下肚。',fx:{money:-800}},
   {t:'颱風來襲，你的一處設施被吹壞，降一級。',f:'颱風是在溫暖的熱帶海面上形成的強烈氣旋。',fx:{downgrade:true}},
@@ -412,7 +445,7 @@ const FATE=[
   {t:'購買野生動物製品，罰款 2,000 元。',f:'犀牛角的主要成分是角蛋白，和人的指甲差不多。',fx:{money:-2000}},
   {t:'設施年度維修，每一級設施付 200 元。',f:'定期維護保育設施，才能讓動物住得安全。',fx:{repair:200}},
   {t:'請大家吃在地有機水果，付給每位玩家 300 元。',f:'吃當季、在地的食物，可以減少長途運輸的碳排放。',fx:{payEach:300}},
-  {t:'你救起受傷的領角鴞送醫，獲得感謝獎金 1,000 元。',f:'領角鴞是夜行性猛禽，晚上出來捕食老鼠和昆蟲。',fx:{money:1000}},
+  {t:'發現受傷領角鴞，請成人協助通報專業救傷，獲感謝金 1,000 元。',f:'領角鴞是夜行性猛禽，晚上出來捕食老鼠和昆蟲。',fx:{money:1000}},
   {t:'福壽螺入侵你家稻田，損失 1,000 元。',f:'福壽螺是外來種，會啃食水稻幼苗，牠的卵是粉紅色的。',fx:{money:-1000}},
   {t:'迷路了，被傳送回大樹公園。',f:'很多鳥類遷徙時會利用太陽、星星和地磁來辨認方向。',fx:{jumpTo:18}},
   {t:'違規捕撈小魚苗，罰款 1,500 元。',f:'捕魚要遵守季節和尺寸規定，讓魚群有機會長大繁殖。',fx:{money:-1500}},
@@ -420,6 +453,652 @@ const FATE=[
   {t:'背包破了洞，遺失一張道具卡。',f:'猴子會打開背包找食物，在山區要看好自己的物品，也不要餵食野生動物。',fx:{loseItem:true}},
   {t:'你當選環保小尖兵，獲得一張均富卡。',f:'垃圾分類、資源回收，能讓廢棄物重新變成資源。',fx:{item:'equal'}},
 ];
+
+/* 擴充事件：合計機會 48 張、命運 48 張，研習金額皆為遊戲設定。 */
+CHANCE.push(...[
+  {
+    "t": "校園留下落葉角落，觀察到分解者，領研究獎金 900 元。",
+    "f": "細菌、真菌等分解者能分解生物遺體，讓物質回到環境中。",
+    "fx": {
+      "money": 900
+    }
+  },
+  {
+    "t": "記錄蝴蝶從卵到成蟲的變化，科學筆記得獎 1,200 元。",
+    "f": "蝴蝶經過卵、幼蟲、蛹、成蟲，是完全變態。",
+    "fx": {
+      "money": 1200
+    }
+  },
+  {
+    "t": "修好漏水水龍頭，獲節水補助 700 元。",
+    "f": "珍惜水資源可以從檢查漏水與減少不必要用水做起。",
+    "fx": {
+      "money": 700
+    }
+  },
+  {
+    "t": "把廚餘妥善分類並參與堆肥示範，領補助 800 元。",
+    "f": "適合的水分、空氣與溫度，有助微生物分解堆肥材料。",
+    "fx": {
+      "money": 800
+    }
+  },
+  {
+    "t": "使用雙面紙完成自然報告，領惜物獎金 600 元。",
+    "f": "減少用量、重複使用，能降低資源消耗。",
+    "fx": {
+      "money": 600
+    }
+  },
+  {
+    "t": "幫窗戶貼上可辨識圖案，改善鳥撞風險，領補助 1,000 元。",
+    "f": "透明或反光玻璃可能讓鳥類難以辨識障礙物。",
+    "fx": {
+      "money": 1000
+    }
+  },
+  {
+    "t": "記錄校園雨量與日期，獲觀測獎金 900 元。",
+    "f": "比較雨量要注意量測地點、時間與器材是否一致。",
+    "fx": {
+      "money": 900
+    }
+  },
+  {
+    "t": "調整路燈遮罩，減少照向棲地的夜間光線，領補助 1,100 元。",
+    "f": "過多人工照明可能干擾夜行動物的活動。",
+    "fx": {
+      "money": 1100
+    }
+  },
+  {
+    "t": "用望遠鏡遠距賞鳥，分享友善觀察紀錄，領稿費 800 元。",
+    "f": "觀察野生動物應保持距離，不餵食、不接觸、不干擾。",
+    "fx": {
+      "money": 800
+    }
+  },
+  {
+    "t": "保留草地與灌木，讓校園有更多棲地，領補助 1,000 元。",
+    "f": "不同高度與種類的植物，能提供不同的食物與躲藏空間。",
+    "fx": {
+      "money": 1000
+    }
+  },
+  {
+    "t": "帶水壺參加校外教學，減少一次性容器，獲 500 元。",
+    "f": "重複使用容器，能減少一次性物品的消耗。",
+    "fx": {
+      "money": 500
+    }
+  },
+  {
+    "t": "設計簡單電路，找出不亮燈泡的原因，獲科學獎金 1,000 元。",
+    "f": "燈泡要發亮，需要合適電源與完整通路。",
+    "fx": {
+      "money": 1000
+    }
+  },
+  {
+    "t": "設置校園氣象角，連續記錄氣溫，領補助 1,200 元。",
+    "f": "氣溫量測要避免陽光直射，並注意通風與量測條件。",
+    "fx": {
+      "money": 1200
+    }
+  },
+  {
+    "t": "參加步道清潔，把自己的垃圾帶下山，獲 700 元。",
+    "f": "食物殘渣也可能吸引野生動物，應妥善帶走。",
+    "fx": {
+      "money": 700
+    }
+  },
+  {
+    "t": "在成人協助下通報受傷野鳥，專業救援順利，獲感謝金 1,000 元。",
+    "f": "發現受傷野生動物，應先保持距離並請成人協助通報。",
+    "fx": {
+      "money": 1000
+    }
+  },
+  {
+    "t": "發現果實黏在衣服上，完成種子傳播觀察，得到遙控骰子。",
+    "f": "有些果實有鉤刺，能附著在動物身上傳播。",
+    "fx": {
+      "item": "remote"
+    }
+  },
+  {
+    "t": "為生態步道設計友善提醒牌，得到一張路障卡。",
+    "f": "導引遊客留在步道，能減少踩踏與棲地干擾。",
+    "fx": {
+      "item": "barrier"
+    }
+  },
+  {
+    "t": "遠距記錄潮間帶生物、不翻動帶走，得到免費卡。",
+    "f": "潮間帶生物要適應海水漲退造成的環境變化。",
+    "fx": {
+      "item": "free"
+    }
+  },
+  {
+    "t": "保育設計獲補助，自己的隨機一處設施免費升一級；無可升級土地時改領 600 元。",
+    "f": "棲地改善要考量生物需要，也要避免過度建設。",
+    "fx": {
+      "upgrade": true
+    }
+  },
+  {
+    "t": "完成棲地清潔與休養計畫，移除身上的壞精靈；沒有壞精靈則獲 600 元。",
+    "f": "減少污染源、保留棲地，有助改善生物的生活環境。",
+    "fx": {
+      "cleanse": true
+    }
+  },
+  {
+    "t": "植物研究獎學金：回答自然題，答對獲 1,200 元。",
+    "f": "綠色植物利用光能進行光合作用，製造養分。",
+    "fx": {
+      "quiz": {
+        "q": "綠色植物行光合作用，主要利用哪一種能量？",
+        "o": [
+          "光能",
+          "聲音",
+          "磁力",
+          "摩擦力"
+        ],
+        "a": "光能",
+        "e": "綠色植物利用光能進行光合作用，製造養分。",
+        "reward": 1200,
+        "penalty": 0
+      }
+    }
+  },
+  {
+    "t": "食物鏈解說員：答對領研究獎金。",
+    "f": "綠色植物能自行製造養分，在食物鏈中是生產者。",
+    "fx": {
+      "quiz": {
+        "q": "在「草→蚱蜢→青蛙」中，誰是生產者？",
+        "o": [
+          "草",
+          "蚱蜢",
+          "青蛙",
+          "三者都是"
+        ],
+        "a": "草",
+        "e": "綠色植物能自行製造養分，在食物鏈中是生產者。",
+        "reward": 1200,
+        "penalty": 0
+      }
+    }
+  },
+  {
+    "t": "昆蟲偵探任務：答對領研究獎金。",
+    "f": "昆蟲胸部有三對腳，共六隻；蜘蛛不是昆蟲。",
+    "fx": {
+      "quiz": {
+        "q": "成蟲昆蟲通常有幾隻腳？",
+        "o": [
+          "6 隻",
+          "4 隻",
+          "8 隻",
+          "10 隻"
+        ],
+        "a": "6 隻",
+        "e": "昆蟲胸部有三對腳，共六隻；蜘蛛不是昆蟲。",
+        "reward": 1200,
+        "penalty": 0
+      }
+    }
+  },
+  {
+    "t": "兩生類觀察任務：答對領研究獎金。",
+    "f": "蝌蚪主要用鰓呼吸，成蛙主要利用肺與皮膚交換氣體。",
+    "fx": {
+      "quiz": {
+        "q": "青蛙由蝌蚪成長的過程，哪個說法正確？",
+        "o": [
+          "身體形態和呼吸方式會改變",
+          "始終沒有四肢",
+          "成蛙用羽毛保暖",
+          "蝌蚪是昆蟲"
+        ],
+        "a": "身體形態和呼吸方式會改變",
+        "e": "蝌蚪主要用鰓呼吸，成蛙主要利用肺與皮膚交換氣體。",
+        "reward": 1200,
+        "penalty": 0
+      }
+    }
+  },
+  {
+    "t": "水的旅行任務：答對領研究獎金。",
+    "f": "蒸發時，液態水變成氣態水進入空氣。",
+    "fx": {
+      "quiz": {
+        "q": "晾在通風處的濕衣服慢慢變乾，主要是因為？",
+        "o": [
+          "水蒸發到空氣中",
+          "水變成沙子",
+          "水全部結冰",
+          "布料把水變不見"
+        ],
+        "a": "水蒸發到空氣中",
+        "e": "蒸發時，液態水變成氣態水進入空氣。",
+        "reward": 1200,
+        "penalty": 0
+      }
+    }
+  },
+  {
+    "t": "磁鐵實驗挑戰：答對領研究獎金。",
+    "f": "磁鐵能吸引鐵等材料，不是所有金屬都能被吸引。",
+    "fx": {
+      "quiz": {
+        "q": "下列哪個物品通常最容易被磁鐵吸引？",
+        "o": [
+          "鐵釘",
+          "塑膠尺",
+          "玻璃杯",
+          "木筷子"
+        ],
+        "a": "鐵釘",
+        "e": "磁鐵能吸引鐵等材料，不是所有金屬都能被吸引。",
+        "reward": 1200,
+        "penalty": 0
+      }
+    }
+  },
+  {
+    "t": "小小電路工程師：答對領研究獎金。",
+    "f": "合適電源與完整通路，才有持續電流流過燈泡。",
+    "fx": {
+      "quiz": {
+        "q": "電池與燈泡接好後，還需要什麼才容易讓燈泡發亮？",
+        "o": [
+          "形成完整通路",
+          "把導線剪斷",
+          "拿掉電池",
+          "只接燈泡一端"
+        ],
+        "a": "形成完整通路",
+        "e": "合適電源與完整通路，才有持續電流流過燈泡。",
+        "reward": 1200,
+        "penalty": 0
+      }
+    }
+  },
+  {
+    "t": "種子旅行任務：答對領研究獎金。",
+    "f": "輕巧或有翅的果實與種子，有助利用風傳播。",
+    "fx": {
+      "quiz": {
+        "q": "有翅狀構造、能隨風轉動的果實，主要靠什麼傳播？",
+        "o": [
+          "風",
+          "磁力",
+          "電池",
+          "月光"
+        ],
+        "a": "風",
+        "e": "輕巧或有翅的果實與種子，有助利用風傳播。",
+        "reward": 1200,
+        "penalty": 0
+      }
+    }
+  },
+  {
+    "t": "觀測時忘記固定器材，支付修理費 400 元。",
+    "f": "實驗前應先檢查器材並注意操作安全。",
+    "fx": {
+      "money": -400
+    }
+  },
+  {
+    "t": "野外活動沒有把食物殘渣帶走，依王國公約支付清潔費 500 元。",
+    "f": "不留下食物，可以避免改變野生動物的覓食行為。",
+    "fx": {
+      "money": -500
+    }
+  },
+  {
+    "t": "溫室澆水過量，支付整理費 300 元。",
+    "f": "植物根部也需要氧氣，土壤長期積水不利部分植物生長。",
+    "fx": {
+      "money": -300
+    }
+  },
+  {
+    "t": "忘記關閉無人使用的照明，依王國節能計畫補繳 400 元。",
+    "f": "節約能源可從關閉不需要的電器開始。",
+    "fx": {
+      "money": -400
+    }
+  }
+]);
+FATE.push(...[
+  {
+    "t": "巡守紀錄證明你遵守保育公約，獲獎金 1,200 元。",
+    "f": "觀察野生動物要不接觸、不干擾、不餵食。",
+    "fx": {
+      "money": 1200
+    }
+  },
+  {
+    "t": "颱風前加固設施成功，獲防災補助 1,000 元。",
+    "f": "防災準備能減少災害損失，應依氣象與主管機關資訊行動。",
+    "fx": {
+      "money": 1000
+    }
+  },
+  {
+    "t": "雨水回收桶供澆花使用，節水計畫獲 800 元。",
+    "f": "回收雨水可用於適當用途，未處理的水不宜直接飲用。",
+    "fx": {
+      "money": 800
+    }
+  },
+  {
+    "t": "濕地復育成果良好，獲保育基金 1,500 元。",
+    "f": "濕地能提供多種生物棲地，也有滯洪等功能。",
+    "fx": {
+      "money": 1500
+    }
+  },
+  {
+    "t": "保留枯木供生物利用，觀察計畫獲 900 元。",
+    "f": "安全且適當保留枯木，能提供部分生物食物與棲身處。",
+    "fx": {
+      "money": 900
+    }
+  },
+  {
+    "t": "繁殖季調整步道動線，降低干擾，獲補助 1,000 元。",
+    "f": "野生動物育幼時，過度靠近可能造成干擾。",
+    "fx": {
+      "money": 1000
+    }
+  },
+  {
+    "t": "保護區巡檢及早發現漏水，節省開支，獲 700 元。",
+    "f": "定期檢查能及早發現器材或設施問題。",
+    "fx": {
+      "money": 700
+    }
+  },
+  {
+    "t": "道路設置生態友善提醒，團隊獲 1,100 元。",
+    "f": "減速、注意動物活動，能協助降低路殺風險。",
+    "fx": {
+      "money": 1100
+    }
+  },
+  {
+    "t": "專業團隊完成棲地修復，自己的隨機一處設施免費升一級；無可升級土地改領 600 元。",
+    "f": "棲地修復要依生物需求規劃，不是建築越多越好。",
+    "fx": {
+      "upgrade": true
+    }
+  },
+  {
+    "t": "巡守員幫你排除污染源，移除壞精靈；無壞精靈則獲 600 元。",
+    "f": "降低污染，需要找到來源並改善處理方式。",
+    "fx": {
+      "cleanse": true
+    }
+  },
+  {
+    "t": "通報疑似非法獵具，保持距離等候專業人員，得到一張免費卡。",
+    "f": "發現疑似獵具不要自行拆除，應保持安全距離並請成人協助通報。",
+    "fx": {
+      "item": "free"
+    }
+  },
+  {
+    "t": "與鄰近保護區分享觀察方法，獲一張驅除卡。",
+    "f": "科學紀錄需要清楚描述時間、地點與觀察方法。",
+    "fx": {
+      "item": "dispel"
+    }
+  },
+  {
+    "t": "為了拍照靠近鳥巢、播放鳥音誘拍，違反王國公約，支付改善費 900 元。",
+    "f": "友善賞鳥不誘拍、不餵食，也不干擾育幼。",
+    "fx": {
+      "money": -900
+    }
+  },
+  {
+    "t": "在公告禁止餵食區餵食野生動物，依王國公約支付 800 元。",
+    "f": "餵食可能改變野生動物行為，也增加人與動物衝突。",
+    "fx": {
+      "money": -800
+    }
+  },
+  {
+    "t": "帶走保護區的野生植物，違反王國公約，支付復育費 1,200 元。",
+    "f": "植物也是棲地的一部分，野外觀察不任意採集。",
+    "fx": {
+      "money": -1200
+    }
+  },
+  {
+    "t": "在溪流傾倒清潔劑，支付王國污染處理費 1,500 元。",
+    "f": "污染物進入水體，可能影響水中生物與水質。",
+    "fx": {
+      "money": -1500
+    }
+  },
+  {
+    "t": "購買來源不明的野生動物製品，依王國公約支付 1,800 元。",
+    "f": "拒買來源不明的野生動物製品，有助減少獵捕與交易需求。",
+    "fx": {
+      "money": -1800
+    }
+  },
+  {
+    "t": "在王國保護區設置獵具，被帶到巡守警察局，停留兩回合。",
+    "f": "野生動物保護需遵守法規與保護區公告，不任意獵捕。",
+    "fx": {
+      "goto": "police"
+    }
+  },
+  {
+    "t": "夜間強光持續照射動物，依王國公約支付 700 元。",
+    "f": "過度照明可能干擾動物休息或活動。",
+    "fx": {
+      "money": -700
+    }
+  },
+  {
+    "t": "未依規定處理寵物，任意棄養到野外，支付王國修復費 1,200 元。",
+    "f": "外來寵物進入野外，可能影響原有生態，也不利寵物存活。",
+    "fx": {
+      "money": -1200
+    }
+  },
+  {
+    "t": "豪雨造成步道受損，隨機一處設施降一級。",
+    "f": "強降雨與地表逕流，可能增加土壤沖蝕。",
+    "fx": {
+      "downgrade": true
+    }
+  },
+  {
+    "t": "設備缺乏保養，每一級設施支付 100 元維護費。",
+    "f": "維護設施時，應兼顧使用安全與棲地影響。",
+    "fx": {
+      "repair": 100
+    }
+  },
+  {
+    "t": "防水袋沒扣好，遺失一張道具卡。",
+    "f": "野外觀察前應整理裝備，並注意自身安全。",
+    "fx": {
+      "loseItem": true
+    }
+  },
+  {
+    "t": "沒有評估天候就進入山區，前往醫院休息一回合。",
+    "f": "戶外活動前應查詢天候並遵循現地安全指示。",
+    "fx": {
+      "goto": "hospital"
+    }
+  },
+  {
+    "t": "巡守員的保育選擇題：答對獲 1,200 元，答錯支付 300 元研習費。",
+    "f": "不餵食、不接觸、不干擾，是友善觀察野生動物的原則。",
+    "fx": {
+      "quiz": {
+        "q": "在野外看到台灣獼猴，較適當的做法是？",
+        "o": [
+          "保持距離、不餵食",
+          "拿食物吸引牠靠近",
+          "追著牠跑",
+          "把幼猴帶回家"
+        ],
+        "a": "保持距離、不餵食",
+        "e": "不餵食、不接觸、不干擾，是友善觀察野生動物的原則。",
+        "reward": 1200,
+        "penalty": 300
+      }
+    }
+  },
+  {
+    "t": "海洋保育研習：答對領獎，答錯支付 300 元研習費。",
+    "f": "海豚是哺乳類，用肺呼吸，需到水面換氣。",
+    "fx": {
+      "quiz": {
+        "q": "海豚需要定期浮出水面，主要是為了？",
+        "o": [
+          "用肺呼吸空氣",
+          "用鰓吸水",
+          "把身體曬乾",
+          "找樹築巢"
+        ],
+        "a": "用肺呼吸空氣",
+        "e": "海豚是哺乳類，用肺呼吸，需到水面換氣。",
+        "reward": 1200,
+        "penalty": 300
+      }
+    }
+  },
+  {
+    "t": "珊瑚保育研習：答對領獎，答錯支付 300 元研習費。",
+    "f": "珊瑚是動物，許多珊瑚由一群珊瑚蟲組成。",
+    "fx": {
+      "quiz": {
+        "q": "珊瑚屬於哪一類生物？",
+        "o": [
+          "動物",
+          "植物",
+          "真菌",
+          "石頭"
+        ],
+        "a": "動物",
+        "e": "珊瑚是動物，許多珊瑚由一群珊瑚蟲組成。",
+        "reward": 1200,
+        "penalty": 300
+      }
+    }
+  },
+  {
+    "t": "濕地巡守問答：答對領獎，答錯支付 300 元研習費。",
+    "f": "濕地提供多種生物覓食、繁殖與躲藏的棲地。",
+    "fx": {
+      "quiz": {
+        "q": "保留濕地，對生物最直接的幫助是？",
+        "o": [
+          "保留食物來源與棲身空間",
+          "讓所有水都消失",
+          "讓所有動物變一樣",
+          "讓所有植物停止生長"
+        ],
+        "a": "保留食物來源與棲身空間",
+        "e": "濕地提供多種生物覓食、繁殖與躲藏的棲地。",
+        "reward": 1200,
+        "penalty": 300
+      }
+    }
+  },
+  {
+    "t": "土壤復育研習：答對領獎，答錯支付 300 元研習費。",
+    "f": "分解者能分解有機物，參與自然界物質循環。",
+    "fx": {
+      "quiz": {
+        "q": "落葉逐漸分解，主要與哪些生物有關？",
+        "o": [
+          "細菌和真菌等分解者",
+          "只有老鷹",
+          "只有鯨魚",
+          "只有麻雀"
+        ],
+        "a": "細菌和真菌等分解者",
+        "e": "分解者能分解有機物，參與自然界物質循環。",
+        "reward": 1200,
+        "penalty": 300
+      }
+    }
+  },
+  {
+    "t": "節能生活挑戰：答對領獎，答錯支付 300 元研習費。",
+    "f": "減量與重複使用，可減少物品與能源消耗。",
+    "fx": {
+      "quiz": {
+        "q": "哪一個行動較符合減少資源消耗？",
+        "o": [
+          "帶自己的水壺並重複使用",
+          "每次都丟掉可用容器",
+          "沒人時一直開燈",
+          "讓水龍頭一直流"
+        ],
+        "a": "帶自己的水壺並重複使用",
+        "e": "減量與重複使用，可減少物品與能源消耗。",
+        "reward": 1200,
+        "penalty": 300
+      }
+    }
+  },
+  {
+    "t": "水循環研習：答對領獎，答錯支付 300 元研習費。",
+    "f": "空氣中的水蒸氣遇冷，可以凝結成液態小水滴。",
+    "fx": {
+      "quiz": {
+        "q": "冰飲料杯外出現小水珠，主要是？",
+        "o": [
+          "空氣中的水蒸氣遇冷凝結",
+          "水穿過杯壁流出",
+          "玻璃變成水",
+          "冰變成沙子"
+        ],
+        "a": "空氣中的水蒸氣遇冷凝結",
+        "e": "空氣中的水蒸氣遇冷，可以凝結成液態小水滴。",
+        "reward": 1200,
+        "penalty": 300
+      }
+    }
+  },
+  {
+    "t": "光影觀察研習：答對領獎，答錯支付 300 元研習費。",
+    "f": "不透明物體阻擋光線，後方會形成較暗的影子。",
+    "fx": {
+      "quiz": {
+        "q": "手電筒照向不透明物體，後方較容易出現？",
+        "o": [
+          "影子",
+          "新的磁鐵",
+          "更多電池",
+          "彩色聲音"
+        ],
+        "a": "影子",
+        "e": "不透明物體阻擋光線，後方會形成較暗的影子。",
+        "reward": 1200,
+        "penalty": 300
+      }
+    }
+  }
+]);
 
 /* 題庫：國小高年級自然科 */
 const QUIZ=[
@@ -906,12 +1585,21 @@ function wait(ms){ return new Promise(r=>setTimeout(r,ms*speed())); }
 function modal({emoji='',title='',sub='',body='',buttons=[{label:'好',value:true,cls:'primary'}],auto=0,wide=false,onMount=null}){
   return new Promise(resolve=>{
     const m=$('#modal'), c=$('#mcard'); $('#tileInfo').hidden=true;
+    let displayedButtons=buttons;
+    if(buttons.length>6){
+      const choices=buttons.map((b,i)=>({...b,index:i})).filter(b=>b.value!=null);
+      const cancels=buttons.filter(b=>b.value==null);
+      body+=`<label class="modal-choice-label">選擇項目<select id="modalChoice" aria-label="選擇項目">${choices.map(b=>`<option value="${b.index}" ${b.disabled?'disabled':''}>${esc(b.label)}</option>`).join('')}</select></label>`;
+      displayedButtons=[...cancels,{label:'確認選擇',value:'__modal_choice__',cls:'primary'}];
+    }
     c.className='mcard'+(wide?' wide':'');
-    c.innerHTML=`${title?`<div class="mhead">${emoji?`<span class="big">${emoji}</span>`:''}<div><h3>${title}</h3>${sub?`<div class="sub">${sub}</div>`:''}</div></div>`:''}<div class="mbody">${body}</div>${buttons.length?`<div class="mbtns">${buttons.map((b,i)=>`<button class="btn ${b.cls||''}" data-i="${i}" ${b.disabled?'disabled':''}>${b.label}</button>`).join('')}</div>`:''}`;
+    c.innerHTML=`${title?`<div class="mhead">${emoji?`<span class="big">${emoji}</span>`:''}<div><h3>${title}</h3>${sub?`<div class="sub">${sub}</div>`:''}</div></div>`:''}<div class="mbody">${body}</div>${displayedButtons.length?`<div class="mbtns">${displayedButtons.map((b,i)=>`<button class="btn ${b.cls||''}" data-i="${i}" ${b.disabled?'disabled':''}>${b.label}</button>`).join('')}</div>`:''}`;
     m.dataset.auto=auto?'true':'false';m.hidden=false; modalOpen=true; let done=false, timer=null;
-    const close=v=>{ if(done) return; done=true; clearTimeout(timer); m.hidden=true; modalOpen=false; resolve(v); };
-    c.querySelectorAll('.mbtns button').forEach(b=>b.onclick=()=>{ SND.play('turn'); close(buttons[+b.dataset.i].value); });
+    const close=v=>{ if(done) return; done=true; clearTimeout(timer); m.hidden=true; modalOpen=false; resolve(v); requestViewportFit(); };
+    c.querySelectorAll('.mbtns button').forEach(b=>b.onclick=()=>{ SND.play('turn'); const value=displayedButtons[+b.dataset.i].value;close(value==='__modal_choice__'?buttons[+c.querySelector('#modalChoice').value].value:value); });
+    compactRuleView(c);
     if(onMount) onMount(c,close);
+    requestViewportFit();
     if(auto){ const def=(buttons.find(b=>b.cls&&b.cls.includes('primary'))||buttons[0]||{}).value; timer=setTimeout(()=>close(def),auto*speed()); }
     const first=c.querySelector('.mbtns .btn.primary')||c.querySelector('button'); if(first && !auto) setTimeout(()=>first.focus({preventScroll:true}),50);
   });
@@ -930,7 +1618,7 @@ function log(text,p=null){
   if(!G) return; G.log.push({t:text,c:p?p.color:'#999'}); if(G.log.length>60) G.log.shift(); renderLog();
 }
 function renderLog(){
-  const el=$('#log'); el.innerHTML=G.log.slice(-40).map(e=>`<div class="le"><span class="dot" style="background:${e.c}"></span><span>${e.t}</span></div>`).join(''); el.scrollTop=el.scrollHeight;
+  const el=$('#log'); el.innerHTML=G.log.slice(-2).map(e=>`<div class="le"><span class="dot" style="background:${e.c}"></span><span>${e.t}</span></div>`).join(''); el.scrollTop=el.scrollHeight;
 }
 function totalAssets(p){
   let v=p.cash+p.deposit; G.tiles.forEach((st,i)=>{ if(st.owner===p.id) v+=TILES[i].price+st.level*TILES[i].up; }); return v;
@@ -946,7 +1634,7 @@ function renderPlayers(){
       <div><div class="pn">${p.name}${p.cpu?' 🤖':''}</div><div class="pm">$${fmt(p.cash)}</div>
       <div class="ps">存 ${fmt(p.deposit)}・地 ${lands}・卡 ${p.items.length} ${sp} ${st}</div></div></div>`;
   }).join('');
-  const act=el.querySelector('.active'); if(act) act.scrollIntoView({inline:'nearest',block:'nearest',behavior:'smooth'});
+  requestViewportFit();
   $('#roundInfo').textContent=`第 ${G.round} 回合`+(G.settings.rounds?` / ${G.settings.rounds}`:'');
 }
 
@@ -1228,12 +1916,19 @@ async function giveItem(p,key,reason){
 }
 
 async function drawCard(p,type,depth){
-  const deck=type==='chance'?CHANCE:FATE; const c=pick(deck); addFact(p,c.f); SND.play('card');
-  await modal({title:type==='chance'?'機會':'命運',emoji:type==='chance'?'🎲':'📜',body:`<div class="cardface ${type}"><div class="ct">${type==='chance'?'CHANCE':'FATE'}</div>${c.t}</div><div class="fact">${c.f}</div>`,auto:p.cpu?2000:0});
+  const deck=type==='chance'?CHANCE:FATE;
+  G.cardDecks??={};G.lastCard??={};let pile=(G.cardDecks[type]||[]).filter(i=>Number.isInteger(i)&&i>=0&&i<deck.length);
+  if(!pile.length){pile=shuffle(deck.map((_,i)=>i));if(pile.length>1&&pile[pile.length-1]===G.lastCard[type]){[pile[0],pile[pile.length-1]]=[pile[pile.length-1],pile[0]];}}
+  G.cardDecks[type]=pile;const index=pile.pop();G.lastCard[type]=index;const c=deck[index]; addFact(p,c.f); SND.play('card');
+  await modal({title:type==='chance'?'機會':'命運',emoji:type==='chance'?'🎲':'📜',body:`<div class="cardface ${type}"><div class="ct">${type==='chance'?'CHANCE':'FATE'}</div>${c.t}</div><div class="fact">${c.f}</div><p class="card-note">事件與獎懲為遊戲設定，並非真實法規的罰則或金額。</p>`,auto:p.cpu?2000:0});
   log(`${p.name} 抽到${type==='chance'?'機會':'命運'}：${c.t}`,p);
   const fx=c.fx;
   if(fx.money>0) gain(p,fx.money);
   if(fx.money<0) await pay(p,-fx.money,null,'');
+  if(p.out)return;
+  if(fx.quiz){await doQuiz(p,fx.quiz);if(p.out)return;}
+  if(fx.cleanse){if(p.spirit&&!SPIRITS[p.spirit.type].good){p.spirit=null;log(`${p.name} 清除了壞精靈`,p);}else gain(p,600,'領取保育補助');}
+  if(fx.upgrade){const own=G.tiles.map((s,i)=>({s,i})).filter(o=>o.s.owner===p.id&&o.s.level<4);if(own.length){const o=pick(own);o.s.level++;log(`${p.name} 的「${TILES[o.i].name}」免費升一級`,p);await growBuilding(o.i);}else gain(p,600,'領取替代補助');}
   if(fx.collectEach){ for(const q of alive()) if(q!==p) await pay(q,fx.collectEach,p,''); }
   if(fx.payEach){ for(const q of alive()) if(q!==p && !p.out) await pay(p,fx.payEach,q,''); }
   if(fx.item) await giveItem(p,fx.item,'得到');
@@ -1252,21 +1947,22 @@ async function drawCard(p,type,depth){
 }
 
 /* ----- 科學挑戰 ----- */
-async function doQuiz(p){
-  if(G.quizUsed.length>=QUIZ.length) G.quizUsed=[];
-  let qi; do{ qi=rnd(QUIZ.length); } while(G.quizUsed.includes(qi)); G.quizUsed.push(qi);
-  const q=QUIZ[qi]; const opts=shuffle(q.o.slice()); const reward=(p.char==='turtle'?1500:1000)*(p.quizBoost?2:1); p.quizBoost=false;
+async function doQuiz(p,challenge=null){
+  let q=challenge;
+  if(!q){if(G.quizUsed.length>=QUIZ.length)G.quizUsed=[];let qi;do{qi=rnd(QUIZ.length);}while(G.quizUsed.includes(qi));G.quizUsed.push(qi);q=QUIZ[qi];}
+  const opts=shuffle(q.o.slice()),baseReward=challenge?challenge.reward:1000;
+  const reward=Math.round(baseReward*(p.char==='turtle'?1.5:1))*(p.quizBoost?2:1),penalty=challenge?challenge.penalty:300;p.quizBoost=false;
   p.quizT++;
   let correct;
   const body=`<p style="font-size:1.1rem;font-weight:700">${q.q}</p><div class="opts">${opts.map((o,k)=>`<button data-k="${k}">${'ABCD'[k]}. ${o}</button>`).join('')}</div><div id="qfb"></div>`;
   if(p.cpu){
     const rate={easy:.5,normal:.7,hard:.88}[G.settings.diff]; correct=Math.random()<rate;
     const choice=correct?q.a:pick(q.o.filter(o=>o!==q.a));
-    await modal({emoji:'🔬',title:'自然科學挑戰站',sub:`答對 +$${fmt(reward)}，答錯 -$300`,body,buttons:[],onMount:(c,close)=>{
+    await modal({emoji:'🔬',title:'自然科學挑戰站',sub:`答對 +$${fmt(reward)}，${penalty?`答錯 -$${fmt(penalty)}`:'答錯不扣款'}`,body,buttons:[],onMount:(c,close)=>{
       setTimeout(()=>{ c.querySelectorAll('.opts button').forEach(b=>{ const o=opts[+b.dataset.k]; if(o===q.a) b.classList.add('right'); else if(o===choice) b.classList.add('wrong'); });
         c.querySelector('#qfb').innerHTML=`<p><b>${p.name} 選了「${choice}」，${correct?'答對了！':'答錯了。'}</b></p><div class="fact">${q.e}</div>`; SND.play(correct?'right':'wrong'); setTimeout(()=>close(),1900*speed()); },900*speed()); }});
   } else {
-    correct=await modal({emoji:'🔬',title:'自然科學挑戰站',sub:`答對 +$${fmt(reward)}，答錯 -$300`,body,buttons:[],onMount:(c,close)=>{
+    correct=await modal({emoji:'🔬',title:'自然科學挑戰站',sub:`答對 +$${fmt(reward)}，${penalty?`答錯 -$${fmt(penalty)}`:'答錯不扣款'}`,body,buttons:[],onMount:(c,close)=>{
       c.querySelectorAll('.opts button').forEach(b=>b.onclick=()=>{
         const o=opts[+b.dataset.k], ok=o===q.a; c.querySelectorAll('.opts button').forEach(x=>{ x.disabled=true; if(opts[+x.dataset.k]===q.a) x.classList.add('right'); }); if(!ok) b.classList.add('wrong');
         SND.play(ok?'right':'wrong');
@@ -1275,7 +1971,7 @@ async function doQuiz(p){
       }); }});
   }
   addFact(p,q.e);
-  if(correct){ p.quizR++; gain(p,reward,'答對科學題'); } else await pay(p,300,null,'答錯科學題');
+  if(correct){ p.quizR++; gain(p,reward,'答對科學題'); } else if(penalty)await pay(p,penalty,null,'答錯科學題');else log(`${p.name} 完成自然知識練習，這次不扣款`,p);
 }
 
 /* ----- 銀行 ----- */
@@ -1417,12 +2113,12 @@ async function endGame(){
   const facts=[]; G.players.forEach(p=>p.facts.forEach(f=>{ if(!facts.includes(f)) facts.push(f); }));
   const shown=shuffle(facts).slice(0,10);
   const r=await modal({emoji:'🏆',title:`${win.name} 成為動物王國大亨！`,sub:G.settings.rounds&&G.round>=G.settings.rounds&&alive().length>1?`${G.settings.rounds} 回合結束，依總資產排名`:'最後存活的玩家',wide:true,
-    body:`<div style="overflow-x:auto"><table class="rank"><thead><tr><th>名次</th><th>玩家</th><th style="text-align:right">總資產</th><th>任務</th><th style="text-align:right">答對率</th></tr></thead><tbody>
+    body:`<div><table class="rank"><thead><tr><th>名次</th><th>玩家</th><th style="text-align:right">總資產</th><th>任務</th><th style="text-align:right">答對率</th></tr></thead><tbody>
     ${ranked.map((p,k)=>`<tr><td>${['🥇','🥈','🥉'][k]||k+1}</td><td><span class="emo">${CHAR[p.char].emoji}</span> ${p.name}${p.cpu?' 🤖':''}${p.out?'（破產）':''}</td><td class="n">$${fmt(p.out?0:totalAssets(p))}</td><td>${(p.missions||[]).filter(m=>m.done).length}/2</td><td class="n">${p.quizT?Math.round(p.quizR/p.quizT*100)+'%（'+p.quizR+'/'+p.quizT+'）':'—'}</td></tr>`).join('')}
     </tbody></table></div>
     <h4 style="font-family:var(--font-display);margin:14px 0 6px">這局學到的動物知識</h4>
-    <ul style="margin:0;padding-left:1.2em;line-height:1.6">${shown.map(f=>`<li>${f}</li>`).join('')||'<li>下次多去科學挑戰站看看吧！</li>'}</ul>`,
-    buttons:[{label:'回到主畫面',value:'menu'},{label:'同樣設定再玩一局',value:'again',cls:'primary'}]});
+    <div class="fact-picks">${shown.map((_,i)=>`<button type="button" data-fact="${i}" aria-pressed="${i===0}">${i+1}</button>`).join('')}</div><div class="fact" id="endFact">${shown[0]||'下次多去科學挑戰站看看吧！'}</div>`,
+    buttons:[{label:'回到主畫面',value:'menu'},{label:'同樣設定再玩一局',value:'again',cls:'primary'}],onMount:c=>c.querySelectorAll('[data-fact]').forEach(b=>b.onclick=()=>{c.querySelector('#endFact').textContent=shown[+b.dataset.fact];c.querySelectorAll('[data-fact]').forEach(x=>x.setAttribute('aria-pressed',x===b));requestViewportFit();})});
   if(r==='again'){ const seats=G.players.map(p=>({name:p.name,char:p.char,cpu:p.cpu})); startGame(seats,G.settings); }
   else backToMenu();
 }
@@ -1434,22 +2130,26 @@ function defaultSeats(){
   setup.seats=order.map((c,i)=>({char:c,cpu:setup.mode==='solo'?i>0:false,name:''}));
 }
 function renderSetup(){
+  setup.editSeat=clamp(setup.editSeat||0,0,setup.count-1);
   const minC=2, maxC=6;
   $('#countSeg').innerHTML=[...Array(maxC-minC+1)].map((_,k)=>{ const n=k+minC; return `<button type="button" data-n="${n}" aria-pressed="${n===setup.count}">${n} 人</button>`; }).join('');
   $('#countSeg').querySelectorAll('button').forEach(b=>b.onclick=()=>{ setup.count=+b.dataset.n; renderSetup(); });
   document.querySelectorAll('#modeSeg button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.mode===setup.mode));
   const used=setup.seats.slice(0,setup.count).map(s=>s.char);
-  $('#seats').innerHTML=setup.seats.slice(0,setup.count).map((s,i)=>{ const c=CHAR[s.char]; return `<div class="seat">
+  $('#seatNav').innerHTML=setup.seats.slice(0,setup.count).map((s,i)=>`<button type="button" data-edit-seat="${i}" aria-label="編輯玩家 ${i+1}" aria-pressed="${i===setup.editSeat}">${i+1} ${CHAR[s.char].emoji}</button>`).join('');
+  $('#seatNav').querySelectorAll('button').forEach(b=>b.onclick=()=>{setup.editSeat=+b.dataset.editSeat;renderSetup();});
+  $('#seats').innerHTML=setup.seats.slice(0,setup.count).map((s,i)=>{ if(i!==setup.editSeat)return ''; const c=CHAR[s.char]; return `<div class="seat">
     <div class="avatar emo" style="background:${c.color}">${c.emoji}</div>
     <div class="seat-top"><button type="button" class="typebtn ${s.cpu?'cpu':''}" data-type="${i}">${s.cpu?'🤖 電腦':'🙂 玩家'} ${i+1}</button>
       <input id="name${i}" data-name="${i}" maxlength="8" placeholder="${c.name}" value="${esc(s.name)}" aria-label="玩家 ${i+1} 名字"></div>
     <div class="charpick">${CHARS.map(cc=>`<button type="button" data-seat="${i}" data-char="${cc.id}" aria-pressed="${cc.id===s.char}" class="${cc.id!==s.char&&used.includes(cc.id)?'taken':''}" title="${cc.name}">${cc.emoji}</button>`).join('')}</div>
-    <div class="seat-skill"><b>${c.name}</b>「${c.quote}」　技能【${c.skill}】${c.desc}<br>✨ 主動【${ACTIVE[c.id].name}】${ACTIVE[c.id].desc}（冷卻 3 個自己的回合）</div></div>`; }).join('');
+    <div class="seat-skill"><b>${c.name}</b>　被動【${c.skill}】${c.desc}<br>✨ 主動【${ACTIVE[c.id].name}】${ACTIVE[c.id].desc}（冷卻 3 個自己的回合）</div></div>`; }).join('');
   $('#seats').querySelectorAll('[data-type]').forEach(b=>b.onclick=()=>{ const s=setup.seats[+b.dataset.type]; s.cpu=!s.cpu; renderSetup(); });
   $('#seats').querySelectorAll('[data-name]').forEach(inp=>inp.oninput=()=>{ setup.seats[+inp.dataset.name].name=inp.value; });
   $('#seats').querySelectorAll('[data-char]').forEach(b=>b.onclick=()=>{
     const i=+b.dataset.seat, c=b.dataset.char; const other=setup.seats.findIndex((s,k)=>k!==i&&s.char===c);
     if(other>=0){ setup.seats[other].char=setup.seats[i].char; } setup.seats[i].char=c; SND.init(); SND.play('step'); renderSetup(); });
+  requestViewportFit();
 }
 function initSetup(){
   defaultSeats(); renderSetup();
@@ -1466,7 +2166,7 @@ function initSetup(){
   const sv=loadSave();
   if(sv && sv.players && !sv.over){
     $('#continuePanel').hidden=false;
-    $('#continueInfo').textContent=`第 ${sv.round} 回合・${sv.players.map(p=>p.name).join('、')}`;
+    $('#continueInfo').textContent=`第 ${sv.round} 回合・${sv.players.length+' 位玩家'}`;
     $('#continueBtn').onclick=()=>{ SND.init(); resumeGame(sv); };
     $('#discardBtn').onclick=()=>{ clearSave(); $('#continuePanel').hidden=true; };
   }
@@ -1493,7 +2193,7 @@ function backToMenu(){
   Object.values(W.barriers).forEach(b=>disposeObject(b)); W.barriers={}; W.spiritMeshes.forEach(m=>disposeObject(m)); W.spiritMeshes=[]; hideDice();
   $('#hud').hidden=true; $('#setup').hidden=false; $('#tileInfo').hidden=true; setOverview(true); view.idleSpin=true;
   $('#continuePanel').hidden=true; const sv=loadSave();
-  if(sv && !sv.over){ $('#continuePanel').hidden=false; $('#continueInfo').textContent=`第 ${sv.round} 回合・${sv.players.map(p=>p.name).join('、')}`; $('#continueBtn').onclick=()=>resumeGame(sv); }
+  if(sv && !sv.over){ $('#continuePanel').hidden=false; $('#continueInfo').textContent=`第 ${sv.round} 回合・${sv.players.length+' 位玩家'}`; $('#continueBtn').onclick=()=>resumeGame(sv); }
 }
 
 function showRules(){
@@ -1501,7 +2201,7 @@ function showRules(){
   <h4>目標</h4><ul><li>每人起始 $20,000。讓對手破產，或在回合上限到時擁有最多總資產（現金＋存款＋土地＋設施），就是動物王國大亨！</li></ul>
   <h4>輪流行動</h4><ul><li>輪到你時可以先用道具卡，再擲兩顆骰子前進。</li><li>經過或停在起點領 $2,000，存款會依利率生利息。</li></ul>
   <h4>動物保護區（土地）</h4><ul><li>停在沒人的土地可以買下；停在自己的土地可以升級：空地 → 觀察站 → 保育中心 → 生態園區 → 國家公園。</li><li>停在別人的土地要付過路費；同一個棲地區全部買下，過路費加倍。</li><li>錢不夠時會自動從存款扣，再不夠就要賣掉設施和土地；還是不夠就破產。</li></ul>
-  <h4>特殊格</h4><ul><li>🎲 機會、📜 命運：抽卡，有獎勵也有懲罰，每張都有自然小知識。</li><li>🔬 科學挑戰站：答對 +$1,000，答錯 -$300。</li><li>🎪 分類快手：20 秒動物分類，每答對 +$200。</li><li>🎁 神秘補給站：免費得到一張道具卡。🏦 銀行：存錢、領錢。</li><li>🏥 動物醫院：休息 1 回合。🚓 盜獵警察局：停 2 回合，可付 $1,000 保釋。🌳 大樹公園：休息，還能趕走壞精靈。</li></ul>
+  <h4>特殊格</h4><ul><li>機會與命運各 48 張；各含 8 張四選一自然挑戰。機會以獎勵為主，命運包含好壞轉機；同牌組抽完一輪再洗牌。</li><li>機會挑戰答錯不扣款；命運研習答錯支付 300 遊戲幣。情境、罰款與停留均為遊戲設定，非真實法規罰則。</li><li>🎲 機會、📜 命運：抽卡，有獎勵也有懲罰，每張都有自然小知識。</li><li>🔬 科學挑戰站：答對 +$1,000，答錯 -$300。</li><li>🎪 分類快手：20 秒動物分類，每答對 +$200。</li><li>🎁 神秘補給站：免費得到一張道具卡。🏦 銀行：存錢、領錢。</li><li>🏥 動物醫院：休息 1 回合。🚓 盜獵警察局：停 2 回合，可付 $1,000 保釋。🌳 大樹公園：休息，還能趕走壞精靈。</li></ul>
   <h4>自然精靈</h4><ul>${Object.values(SPIRITS).map(s=>`<li>${s.emoji} ${s.name}：${s.desc}，${s.turns} 回合。</li>`).join('')}<li>精靈會隨機出現在棋盤上，停在那一格就會附身。</li></ul>
   <h4>道具卡（最多 6 張）</h4><ul>${Object.values(ITEMS).map(s=>`<li>${s.emoji} ${s.name}：${s.desc}</li>`).join('')}</ul>
   <h4>角色技能</h4><ul>${CHARS.map(c=>`<li>${c.emoji} ${c.name}【${c.skill}】${c.desc}</li>`).join('')}</ul>
@@ -1528,7 +2228,7 @@ function bindHud(){
     const r=await modal({emoji:'☰',title:'選單',body:'<p>遊戲每回合都會自動存檔，下次打開可以繼續。</p>',buttons:[{label:'回到主畫面',value:'menu'},{label:'繼續玩',value:null,cls:'primary'}]});
     if(r==='menu') backToMenu();
   };
-  $('#log').onclick=()=>$('#log').classList.toggle('collapsed');
+  $('#log').onclick=showGameHistory;$('#log').setAttribute('role','button');$('#log').tabIndex=0;$('#log').setAttribute('aria-label','查看遊戲紀錄');$('#log').onkeydown=e=>{if(e.key==='Enter'){e.stopPropagation();showGameHistory();}};
   if(window.innerWidth<620) $('#log').classList.add('collapsed');
   document.addEventListener('keydown',e=>{ if((e.key===' '||e.key==='Enter') && preRollResolve && !modalOpen && document.activeElement===document.body){ e.preventDefault(); finishPreRoll({steps:null}); } });
 }
@@ -1702,9 +2402,48 @@ function bindExpansion(){
  }
 }
 
+let fitRequest=0;
+function requestViewportFit(){if(fitRequest)return;fitRequest=requestAnimationFrame(()=>{fitRequest=0;fitGameViewport();});}
+function fitGameViewport(){
+ const w=Math.round(window.visualViewport?.width||innerWidth),h=Math.round(window.visualViewport?.height||innerHeight);
+ document.documentElement.style.setProperty('--game-width',w+'px');document.documentElement.style.setProperty('--game-height',h+'px');
+ const setupEl=$('#setup'),inner=$('.setup-inner');
+ if(!setupEl.hidden&&inner){
+  const width=Math.min(1080,w-16);inner.style.width=width+'px';
+  const naturalH=inner.offsetHeight,desired=Math.min(1.6,Math.max(1,Math.min(w/1200,h/850)));
+  const scale=Math.min(desired,(w-20)/width,(h-32)/Math.max(1,naturalH));
+  inner.style.zoom=String(scale);
+ }
+ const card=$('#mcard');if(!$('#modal').hidden){
+  card.style.width=Math.min(card.classList.contains('wide')?760:520,w-20)+'px';
+  const naturalH=card.offsetHeight,scale=Math.min(1.4,Math.max(1,Math.min(w/1400,h/950)),(h-20)/Math.max(1,naturalH));
+  card.style.zoom=String(Math.min(scale,(w-20)/card.offsetWidth));
+ }
+ document.documentElement.style.setProperty('--players-height',$('#players').offsetHeight+'px');
+ document.documentElement.style.setProperty('--dock-height',Math.max(40,$('#dock').offsetHeight)+'px');
+}
+function compactRuleView(c){
+ const rules=c.querySelector('.rules');if(!rules)return;
+ const sections=[];let active=null;
+ for(const child of [...rules.children]){if(child.tagName==='H4'){active=document.createElement('div');active.className='rules-section';sections.push({name:child.textContent,el:active});}if(active)active.appendChild(child);}
+ const select=document.createElement('select');select.className='rules-select';select.setAttribute('aria-label','選擇規則章節');
+ sections.forEach((s,i)=>{select.add(new Option(s.name,String(i)));s.el.hidden=i!==0;});
+ rules.replaceChildren(select,...sections.map(s=>s.el));select.onchange=()=>{sections.forEach((s,i)=>s.el.hidden=i!==+select.value);requestViewportFit();};
+}
+async function showGameHistory(){
+ if(!G||modalOpen||!preRollResolve)return;
+ const entries=G.log.slice(),last=entries.length-1;if(last<0)return;
+ await modal({emoji:'📜',title:'遊戲紀錄',body:`<p class="log-detail" id="historyText">${esc(entries[last].t)}</p><label>拖曳選擇紀錄 <span id="historyIndex">${last+1} / ${entries.length}</span><input class="log-range" type="range" min="0" max="${last}" value="${last}" aria-label="選擇遊戲紀錄"></label>`,onMount:c=>{c.querySelector('input').oninput=e=>{const i=+e.target.value;c.querySelector('#historyText').textContent=entries[i].t;c.querySelector('#historyIndex').textContent=`${i+1} / ${entries.length}`;requestViewportFit();};}});
+}
 async function boot(){
   try{ await Promise.race([document.fonts.load('40px Huninn'),new Promise(r=>setTimeout(r,2500))]); }catch(e){}
   buildScene(); initSetup(); bindHud(); bindExpansion();
+  window.addEventListener('resize',requestViewportFit);window.visualViewport?.addEventListener('resize',requestViewportFit);
+  document.fonts.ready.then(requestViewportFit);document.fonts.addEventListener('loadingdone',requestViewportFit);
+  const fitObserver=new MutationObserver(requestViewportFit);fitObserver.observe($('#mcard'),{childList:true,subtree:true,characterData:true});
+  const hudObserver=new ResizeObserver(requestViewportFit);hudObserver.observe($('#dock'));hudObserver.observe($('#players'));
+  $('#log').title='點選查看完整紀錄';
+  requestViewportFit();
 }
 if(window.THREE) boot(); else window.addEventListener('three-ready',boot,{once:true});
 </script>
