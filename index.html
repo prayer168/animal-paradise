@@ -140,6 +140,7 @@ label.lab{font-weight:700;font-size:.95rem;min-width:5.5em}
 .fact::before{content:"🔎 小知識　";font-family:var(--emoji);font-weight:700;color:var(--leaf-deep)}
 .mbtns{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
 .mbtns .btn{flex:1 1 auto}
+.speak-control{align-self:flex-start;font-size:.9rem}
 .cardface{border-radius:14px;padding:14px;color:#fff;font-family:var(--font-display);font-size:1.15rem;line-height:1.5}
 .cardface.chance{background:linear-gradient(135deg,#F49B1C,#E5672A)}
 .cardface.fate{background:linear-gradient(135deg,#5B5FC7,#3A3F9E)}
@@ -1606,6 +1607,7 @@ function wait(ms){ return new Promise(r=>setTimeout(r,ms*speed())); }
 function modal({emoji='',title='',sub='',body='',buttons=[{label:'好',value:true,cls:'primary'}],auto=0,wide=false,onMount=null}){
   return new Promise(resolve=>{
     const m=$('#modal'), c=$('#mcard'); $('#tileInfo').hidden=true;
+    if('speechSynthesis' in window) window.speechSynthesis.cancel();
     let displayedButtons=buttons;
     if(buttons.length>6){
       const choices=buttons.map((b,i)=>({...b,index:i})).filter(b=>b.value!=null);
@@ -1614,14 +1616,31 @@ function modal({emoji='',title='',sub='',body='',buttons=[{label:'好',value:tru
       displayedButtons=[...cancels,{label:'確認選擇',value:'__modal_choice__',cls:'primary'}];
     }
     c.className='mcard'+(wide?' wide':'');
-    c.innerHTML=`${title?`<div class="mhead">${emoji?`<span class="big">${emoji}</span>`:''}<div><h3>${title}</h3>${sub?`<div class="sub">${sub}</div>`:''}</div></div>`:''}<div class="mbody">${body}</div>${displayedButtons.length?`<div class="mbtns">${displayedButtons.map((b,i)=>`<button class="btn ${b.cls||''}" data-i="${i}" ${b.disabled?'disabled':''}>${b.label}</button>`).join('')}</div>`:''}`;
+    c.innerHTML=`${title?`<div class="mhead">${emoji?`<span class="big">${emoji}</span>`:''}<div><h3>${title}</h3>${sub?`<div class="sub">${sub}</div>`:''}</div></div>`:''}<div class="mbody">${body}</div>${'speechSynthesis' in window?'<button class="btn small speak-control" type="button" aria-label="停止朗讀">⏹ 停止朗讀</button>':''}${displayedButtons.length?`<div class="mbtns">${displayedButtons.map((b,i)=>`<button class="btn ${b.cls||''}" data-i="${i}" ${b.disabled?'disabled':''}>${b.label}</button>`).join('')}</div>`:''}`;
     m.dataset.auto=auto?'true':'false';m.hidden=false; modalOpen=true; let done=false, timer=null;
-    const close=v=>{ if(done) return; done=true; clearTimeout(timer); m.hidden=true; modalOpen=false; resolve(v); requestViewportFit(); };
+    const speechButton=c.querySelector('.speak-control');
+    let activeUtterance=null,userStopped=false;
+    const speechText=()=>[c.querySelector('.mhead')?.innerText,c.querySelector('.mbody')?.innerText,...[...c.querySelectorAll('.mbtns button')].map(b=>b.innerText)].filter(Boolean).join('。').replace(/[\p{Extended_Pictographic}\uFE0F]/gu,' ').replace(/\s+/g,' ').trim();
+    const readModal=()=>{
+      if(!speechButton||done) return;
+      const text=speechText(); if(!text) return;
+      activeUtterance=null; window.speechSynthesis.cancel(); userStopped=false;
+      const utterance=new SpeechSynthesisUtterance(text); utterance.lang='zh-TW'; utterance.rate=1;
+      const voices=window.speechSynthesis.getVoices(); utterance.voice=voices.find(v=>v.lang.toLowerCase()==='zh-tw')||voices.find(v=>v.lang.toLowerCase().startsWith('zh'))||null;
+      activeUtterance=utterance;
+      speechButton.textContent='⏹ 停止朗讀'; speechButton.setAttribute('aria-label','停止朗讀');
+      const ended=()=>{ if(done||activeUtterance!==utterance) return; activeUtterance=null; speechButton.textContent='🔊 再唸一次'; speechButton.setAttribute('aria-label','再唸一次'); if(auto&&!userStopped) close(displayedButtons.find(b=>b.cls&&b.cls.includes('primary'))?.value??displayedButtons[0]?.value); };
+      utterance.onend=ended; utterance.onerror=ended;
+      window.speechSynthesis.speak(utterance);
+    };
+    const close=v=>{ if(done) return; done=true; clearTimeout(timer); activeUtterance=null; if('speechSynthesis' in window) window.speechSynthesis.cancel(); m.hidden=true; modalOpen=false; resolve(v); requestViewportFit(); };
+    if(speechButton) speechButton.onclick=()=>{ if(window.speechSynthesis.speaking||window.speechSynthesis.pending){ userStopped=true; activeUtterance=null; window.speechSynthesis.cancel(); speechButton.textContent='🔊 再唸一次'; speechButton.setAttribute('aria-label','再唸一次'); } else readModal(); };
     c.querySelectorAll('.mbtns button').forEach(b=>b.onclick=()=>{ SND.play('turn'); const value=displayedButtons[+b.dataset.i].value;close(value==='__modal_choice__'?buttons[+c.querySelector('#modalChoice').value].value:value); });
     compactRuleView(c);
     if(onMount) onMount(c,close);
     requestViewportFit();
-    if(auto){ const def=(buttons.find(b=>b.cls&&b.cls.includes('primary'))||buttons[0]||{}).value; timer=setTimeout(()=>close(def),auto*speed()); }
+    if(speechButton) setTimeout(readModal,80);
+    if(auto){ const def=(buttons.find(b=>b.cls&&b.cls.includes('primary'))||buttons[0]||{}).value; const fallback=speechButton?Math.min(30000,Math.max(auto*speed(),speechText().length*250+2000)):auto*speed(); timer=setTimeout(()=>close(def),fallback); }
     const first=c.querySelector('.mbtns .btn.primary')||c.querySelector('button'); if(first && !auto) setTimeout(()=>first.focus({preventScroll:true}),50);
   });
 }
