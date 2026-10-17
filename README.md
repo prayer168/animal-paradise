@@ -1,6 +1,4 @@
-# 動物王國大亨 v2.3.1 — Animal Paradise
-
-彈出視窗會自動以繁體中文朗讀標題、內容與選項；可按「停止朗讀」或「再唸一次」控制。
+# 動物王國大亨 v2.3.2 — Animal Paradise
 
 直接用 Chrome 或 Edge 打開 `index.html`。需要網路載入 Three.js 與字型。
 `animal-kingdom-tycoon/` 是壓縮檔原版備份，升級版入口位於本資料夾根目錄。
